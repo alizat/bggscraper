@@ -1,2 +1,2 @@
 # bggscraper
-An R package that scrapes the BGG websites all sorts of (publicly accessible) data on boardgamegeek.com
+An R package that scrapes all sorts of (publicly accessible) data from boardgamegeek.com
