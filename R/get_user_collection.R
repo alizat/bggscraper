@@ -26,6 +26,11 @@ get_user_collection <- function(user) {
     }
     collectionitems <- dplyr::select(collectionitems, -Status)
 
+    # game titles & links
+    game_links  <- rvest::html_attr(rvest::html_elements(html_page, 'a.primary'), 'href')
+    game_links  <- paste0('https://boardgamegeek.com', game_links)
+    collectionitems <- dplyr::mutate(collectionitems, game_link = game_links)
+
     # return
     collectionitems
 }
