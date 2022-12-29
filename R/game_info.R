@@ -1,4 +1,4 @@
-grab_game_info <- function(game_id) {
+game_info <- function(game_id) {
     # game details
     game_xml_link <- paste0('https://www.boardgamegeek.com/xmlapi2/thing?id=', game_id, '&stats=1')
     game_details <- rvest::read_html(game_xml_link)
