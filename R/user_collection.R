@@ -1,6 +1,6 @@
 user_collection <- function(user) {
     # user collection link
-    link <- paste0('https://boardgamegeek.com/xmlapi2/collection?username=', user)
+    link <- paste0('https://boardgamegeek.com/xmlapi2/collection?username=', user, '&stats=1')
 
     # obtain html page
     html_page <- rvest::read_html(link)
