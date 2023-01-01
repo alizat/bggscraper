@@ -11,4 +11,4 @@ Using this library, you may scrape the following info (among others):
 * Info on users themselves.
 * list of games are hot nowadays.
 * Information on plays of a certain game for one or more users.
-* Geeklists, forum lists, forums, threads, guilds pertaining to a certain board game id.
+* geeklists, forum lists, forums, threads, guilds pertaining to a certain board game id.
