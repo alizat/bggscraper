@@ -1,6 +1,13 @@
-top_k_games_ids <- function(k = 5000) {
+top_k_games_ids <- function(k = 100) {
     # initialize
     games_ids_all <- c()
+
+    # lower bound for k is 1
+    if (k < 1) {
+        message('Lower limit for K is 1')
+        message('Setting K = 1 ...')
+        k <- 1
+    }
 
     # upper bound for k is 5000
     if (k > 5000) {
@@ -10,7 +17,8 @@ top_k_games_ids <- function(k = 5000) {
     }
 
     # loop on pages
-    for (i in 1:50) {
+    i <- 1
+    while(length(games_ids_all) < k) {
         # retrieve page i
         page_i <- glue::glue('https://boardgamegeek.com/search/boardgame/page/{i}?advsearch=1&q=&sort=rank&sortdir=asc')
         page_i <- rvest::read_html(page_i)
@@ -21,13 +29,31 @@ top_k_games_ids <- function(k = 5000) {
         games_ids <- stringr::str_extract(games_ids, '/[:digit:]+/')
         games_ids <- stringr::str_replace_all(games_ids, '/', '')
 
+        # precaution: break in case of empty page
+        if (length(games_ids) == 0)
+            break
+
         # append
         games_ids_all <- c(games_ids_all, games_ids)
 
-        # 10-second sleep so BGG website would not block us
-        Sys.sleep(10)
+        # increment i
+        i <- i + 1
+
+        # 5-second sleep so BGG website would not block us
+        Sys.sleep(5)
     }
 
-    #return game ids
+    # keep k game ids
+    if (length(games_ids_all) > 0) {
+        # precaution: k may be lower than length(games_ids_all)
+        k <- min(k, length(games_ids_all))
+
+        # keep number of games requested
+        games_ids_all <- games_ids_all[1:k]
+    } else {
+        message("That's odd... No games retrieved?")
+    }
+
+    # return game ids
     games_ids_all
 }
