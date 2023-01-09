@@ -19,8 +19,8 @@ year_games_ids <- function(y) {
         # append
         games_ids_all <- c(games_ids_all, games_ids)
 
-        # 10-second sleep so BGG website would not block us
-        Sys.sleep(10)
+        # 5-second sleep so BGG website would not block us
+        Sys.sleep(5)
     }
 
     #return game ids
