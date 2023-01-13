@@ -1,4 +1,4 @@
-top_k_games_ids <- function(k = 100) {
+top_k_games_ids <- function(k = 100, wait = 5) {
     # initialize
     games_ids_all <- c()
 
@@ -39,8 +39,8 @@ top_k_games_ids <- function(k = 100) {
         # increment i
         i <- i + 1
 
-        # 5-second sleep so BGG website would not block us
-        Sys.sleep(5)
+        # duration to sleep so BGG website would not block us
+        Sys.sleep(wait)
     }
 
     # keep k game ids
