@@ -3,17 +3,10 @@ families <- function(wait = 5) {
     families <- c()
 
     # get last page index
-    paginator <- rvest::read_html('https://boardgamegeek.com/browse/boardgamefamily')
-    paginator <- rvest::html_elements(paginator, '.fr a')
-    last_page_element <- paginator[rvest::html_attr(paginator, 'title') == 'last page']
-    last_page <- rvest::html_text(last_page_element)
-    last_page <- stringr::str_extract(last_page, '[:digit:]+')
-    last_page <- as.numeric(last_page)
+    last_page <- last_page_index('https://boardgamegeek.com/browse/boardgamefamily')
 
     # loop on pages
     for (i in 1:last_page) {
-        print(i)
-
         # retrieve page i
         page_i <- glue::glue('https://boardgamegeek.com/browse/boardgamefamily/page/{i}')
         page_i <- rvest::read_html(page_i)
@@ -30,7 +23,7 @@ families <- function(wait = 5) {
         Sys.sleep(wait)
     }
 
-    #return families
+    # return
     families
 }
 

@@ -77,7 +77,7 @@ game_info <- function(game_id) {
     features <- dplyr::mutate(features, game_id = game_id)
     features <- dplyr::select(features, game_id, feature, value)
 
-    # return features
+    # return
     features
 }
 

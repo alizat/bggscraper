@@ -84,6 +84,6 @@ user_collection <- function(user) {
     collectionitems <- dplyr::mutate(collectionitems, user = user)
     collectionitems <- dplyr::select(collectionitems, user, dplyr::everything())
 
-    # return collection
+    # return
     collectionitems
 }

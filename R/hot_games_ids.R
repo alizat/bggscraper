@@ -12,6 +12,6 @@ hot_games_ids <- function() {
     games_ids_all <- rvest::html_elements(page, 'item')
     games_ids_all <- rvest::html_attr(games_ids_all, 'id')
 
-    #return game ids
+    # return
     games_ids_all
 }

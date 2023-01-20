@@ -8,6 +8,6 @@ mechanics <- function() {
     # retrieve mechanics
     mechanics <- rvest::html_text(rvest::html_elements(page, '.forum_table tr > td > a'))
 
-    # return mechanics
+    # return
     mechanics
 }

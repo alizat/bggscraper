@@ -45,7 +45,7 @@ top_k_games_ids <- function(k = 100, wait = 5) {
 
     # keep k game ids
     if (length(games_ids_all) > 0) {
-        # precaution: k may be lower than length(games_ids_all)
+        # precaution: length(games_ids_all) may be lower than k
         k <- min(k, length(games_ids_all))
 
         # keep number of games requested
@@ -54,6 +54,6 @@ top_k_games_ids <- function(k = 100, wait = 5) {
         message("That's odd... No games retrieved?")
     }
 
-    # return game ids
+    # return
     games_ids_all
 }

@@ -8,6 +8,6 @@ categories <- function() {
     # retrieve categories
     categories <- rvest::html_text(rvest::html_elements(page, '.forum_table tr > td > a'))
 
-    # return categories
+    # return
     categories
 }
