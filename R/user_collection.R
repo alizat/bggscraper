@@ -34,7 +34,8 @@ user_collection <- function(user) {
             'status::wishlist' = '',
             'status::preordered' = '',
             'status::lastmodified' = '',
-            'numplays' = ''
+            'numplays' = '',
+            'comment' = ''
         )
 
     # extract features
@@ -45,6 +46,18 @@ user_collection <- function(user) {
             attribute <- components[[2]]
             features[[feat]] <- rvest::html_elements(html_page, tag)
             features[[feat]] <- as.character(rvest::html_attr(features[[feat]], attribute))
+        } else if (feat == 'comment') {
+            features[[feat]] <-
+                map_chr(
+                    rvest::html_elements(html_page, 'item'),
+                    function(x) {
+                        y <- rvest::html_elements(x, 'comment')
+                        y <- rvest::html_text(y)
+                        if(is_empty(y))
+                            y <- ''
+                        y
+                    }
+                )
         } else {
             features[[feat]] <- rvest::html_elements(html_page, feat)
             features[[feat]] <- rvest::html_text(features[[feat]])
