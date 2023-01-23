@@ -1,11 +1,9 @@
 plays <- function(game_id, wait = 5) {
-    # initialize
-    games_ids_all <- c()
-
     # number of pages
     page <- rvest::read_html(glue::glue('https://boardgamegeek.com/xmlapi2/plays?id={game_id}'))
-    num_pages <- rvest::html_attr(rvest::html_elements(page, 'plays'), 'total')
-    num_pages <- as.numeric(num_pages)
+    num_plays <- rvest::html_attr(rvest::html_elements(page, 'plays'), 'total')
+    num_plays <- as.numeric(num_plays)
+    num_pages <- ceiling(num_plays / 100)
 
     # plays
     plays <- list()
@@ -15,16 +13,23 @@ plays <- function(game_id, wait = 5) {
         page_i <- rvest::read_html(page_i)
 
         # get plays of page i
+        plays_i <- rvest::html_elements(page_i, 'play')
+
+        # precaution: break in case of empty page
+        if (length(plays_i) == 0)
+            break
+
+        # parse
         plays_i <-
             dplyr::tibble(
-                id         = rvest::html_attr(rvest::html_elements(page_i, 'play'), 'id'),
-                userid     = rvest::html_attr(rvest::html_elements(page_i, 'play'), 'userid'),
-                date       = rvest::html_attr(rvest::html_elements(page_i, 'play'), 'date'),
-                quantity   = rvest::html_attr(rvest::html_elements(page_i, 'play'), 'quantity'),
-                length     = rvest::html_attr(rvest::html_elements(page_i, 'play'), 'length'),
-                incomplete = rvest::html_attr(rvest::html_elements(page_i, 'play'), 'incomplete'),
-                nowinstats = rvest::html_attr(rvest::html_elements(page_i, 'play'), 'nowinstats'),
-                location   = rvest::html_attr(rvest::html_elements(page_i, 'play'), 'location')
+                id         = rvest::html_attr(plays_i, 'id'),
+                userid     = rvest::html_attr(plays_i, 'userid'),
+                date       = rvest::html_attr(plays_i, 'date'),
+                quantity   = rvest::html_attr(plays_i, 'quantity'),
+                length     = rvest::html_attr(plays_i, 'length'),
+                incomplete = rvest::html_attr(plays_i, 'incomplete'),
+                nowinstats = rvest::html_attr(plays_i, 'nowinstats'),
+                location   = rvest::html_attr(plays_i, 'location')
             )
 
         # append
