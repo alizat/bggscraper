@@ -72,6 +72,9 @@ game_info <- function(game_id) {
     names(features)[names(features) == 'ratings > numweights']          <- 'num_weights'
     names(features)[names(features) == 'ratings > averageweight']       <- 'avg_weight'
 
+    # add item type
+    features[['type']] <- rvest::html_attr(rvest::html_elements(game_details, 'item'), 'type')
+
     # convert to data frame
     features <- purrr::map2_dfr(names(features), features, ~ tibble::tibble(feature = .x, value = .y))
     features <- dplyr::mutate(features, game_id = game_id)
