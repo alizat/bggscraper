@@ -48,7 +48,7 @@ user_collection <- function(user) {
             features[[feat]] <- as.character(rvest::html_attr(features[[feat]], attribute))
         } else if (feat == 'comment') {
             features[[feat]] <-
-                map_chr(
+                purrr::map_chr(
                     rvest::html_elements(html_page, 'item'),
                     function(x) {
                         y <- rvest::html_elements(x, 'comment')

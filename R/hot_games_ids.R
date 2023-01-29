@@ -1,9 +1,9 @@
-hot_games_ids <- function() {
+hot_games_ids <- function(type = 'boardgame') {
     # initialize
     games_ids_all <- c()
 
     # link
-    link <- 'https://boardgamegeek.com/xmlapi2/hot?type=boardgame'
+    link <- 'https://boardgamegeek.com/xmlapi2/hot?type={type}'
 
     # html page
     page <- rvest::read_html(link)
