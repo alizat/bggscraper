@@ -2,13 +2,16 @@ families <- function(wait = 5) {
     # initialize
     families <- c()
 
+    # xml link
+    link_base <- 'https://boardgamegeek.com/browse/boardgamefamily'
+
     # get last page index
-    last_page <- last_page_index('https://boardgamegeek.com/browse/boardgamefamily')
+    last_page <- last_page_index(link_base)
 
     # loop on pages
     for (i in 1:last_page) {
         # retrieve page i
-        page_i <- glue::glue('https://boardgamegeek.com/browse/boardgamefamily/page/{i}')
+        page_i <- glue::glue('{link_base}/page/{i}')
         page_i <- rvest::read_html(page_i)
 
         # grab families of page i

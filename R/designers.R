@@ -2,13 +2,16 @@ designers <- function(wait = 5) {
     # initialize
     designers <- c()
 
+    # xml link
+    link_base <- 'https://boardgamegeek.com/browse/boardgamedesigner'
+
     # get last page index
-    last_page <- last_page_index('https://boardgamegeek.com/browse/boardgamedesigner')
+    last_page <- last_page_index(link_base)
 
     # loop on pages
     for (i in 1:last_page) {
         # retrieve page i
-        page_i <- glue::glue('https://boardgamegeek.com/browse/boardgamedesigner/page/{i}')
+        page_i <- glue::glue('{link_base}/page/{i}')
         page_i <- rvest::read_html(page_i)
 
         # grab designers of page i

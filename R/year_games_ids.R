@@ -2,13 +2,19 @@ year_games_ids <- function(y, wait = 5) {
     # initialize
     games_ids_all <- c()
 
+    # xml link
+    link_base <- 'https://boardgamegeek.com/search/boardgame'
+
+    # params
+    params <- glue::glue('advsearch=1&q=&sort=rank&sortdir=asc&range[yearpublished][min]={y}&range[yearpublished][max]={y}&range[numvoters][min]=1')
+
     # get last page index
-    last_page <- last_page_index(glue::glue('https://boardgamegeek.com/search/boardgame?advsearch=1&q=&sort=rank&sortdir=asc&range[yearpublished][min]={y}&range[yearpublished][max]={y}&range[numvoters][min]=1'))
+    last_page <- last_page_index(glue::glue('{link_base}?{params}'))
 
     # loop on pages
     for (i in 1:last_page) {
         # retrieve page i
-        page_i <- glue::glue('https://boardgamegeek.com/search/boardgame/page/{i}?advsearch=1&q=&sort=rank&sortdir=asc&range[yearpublished][min]={y}&range[yearpublished][max]={y}&range[numvoters][min]=1')
+        page_i <- glue::glue('{link_base}/page/{i}?{params}')
         page_i <- rvest::read_html(page_i)
         page_i <- rvest::html_elements(page_i, xpath = '//*[@id="collectionitems"]')
 
