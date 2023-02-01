@@ -6,8 +6,10 @@ mechanics <- function() {
     page <- rvest::read_html(link)
 
     # retrieve mechanics
-    mechanics <- rvest::html_text(rvest::html_elements(page, '.forum_table tr > td > a'))
+    mechanics     <- rvest::html_text(rvest::html_elements(page, '.forum_table tr > td > a'))
+    mechanics_ids <- rvest::html_attr(rvest::html_elements(page, '.forum_table tr > td > a'), 'href')
+    mechanics_ids <- stringr::str_extract(mechanics_ids, '[:digit:]+')
 
     # return
-    mechanics
+    dplyr::tibble(mechanic_id = mechanics_ids, mechanic_name = mechanics)
 }

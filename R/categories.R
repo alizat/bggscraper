@@ -6,8 +6,10 @@ categories <- function() {
     page <- rvest::read_html(link)
 
     # retrieve categories
-    categories <- rvest::html_text(rvest::html_elements(page, '.forum_table tr > td > a'))
+    categories     <- rvest::html_text(rvest::html_elements(page, '.forum_table tr > td > a'))
+    categories_ids <- rvest::html_attr(rvest::html_elements(page, '.forum_table tr > td > a'), 'href')
+    categories_ids <- stringr::str_extract(categories_ids, '[:digit:]+')
 
     # return
-    categories
+    dplyr::tibble(category_id = categories_ids, category_name = categories)
 }

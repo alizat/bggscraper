@@ -1,26 +1,27 @@
 designers <- function(wait = 5) {
-    # initialize
-    designers <- c()
-
-    # xml link
-    link_base <- 'https://boardgamegeek.com/browse/boardgamedesigner'
+    # designers link
+    link <- 'https://boardgamegeek.com/browse/boardgamedesigner'
 
     # get last page index
-    last_page <- last_page_index(link_base)
+    last_page <- last_page_index(link)
 
     # loop on pages
+    designers <- dplyr::tibble()
     for (i in 1:last_page) {
         # retrieve page i
-        page_i <- glue::glue('{link_base}/page/{i}')
+        page_i <- glue::glue('{link}/page/{i}')
         page_i <- rvest::read_html(page_i)
 
         # grab designers of page i
-        designers_i <- rvest::html_text(rvest::html_elements(page_i, 'table > tr > td > a'))
+        designers_i     <- rvest::html_text(rvest::html_elements(page, 'table > tr > td > a'))
+        designers_i_ids <- rvest::html_attr(rvest::html_elements(page, 'table > tr > td > a'), 'href')
+        designers_i_ids <- stringr::str_extract(designers_i_ids, '[:digit:]+')
+
         if (length(designers_i) == 0)
             break
 
         # append
-        designers <- c(designers, designers_i)
+        designers <- rbind(designers, dplyr::tibble(designer_id = designers_i_ids, designer_name = designers_i))
 
         # duration to sleep so BGG website would not block us
         Sys.sleep(wait)
