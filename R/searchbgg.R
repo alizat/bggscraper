@@ -31,7 +31,7 @@ searchbgg <- function(query,
         }
 
     } else {
-        # both board games and expansions
+        # type was specified as something other than 'boardgame'
         link <- glue::glue('https://boardgamegeek.com/xmlapi2/search?query={query}&type={type}')
         page <- rvest::read_html(link)
         all_items       <- rvest::html_elements(page, 'item')
@@ -44,16 +44,15 @@ searchbgg <- function(query,
     # query result
     query_result <-
         dplyr::tibble(
-        id = all_items_ids,
-        type = all_items_types,
-        name = all_items_names,
-        yearpublished = all_items_year
+        item_id            = all_items_ids,
+        item_type          = all_items_types,
+        item_name          = all_items_names,
+        item_yearpublished = all_items_year
     )
     if (is.null(type)) {
-        query_result$type <- dplyr::if_else(query_result$type == 'primary', 'boardgame', query_result$type)
-    } else {
-        query_result$type <- dplyr::if_else(query_result$type == 'primary', type, query_result$type)
+        type <- 'boardgame'
     }
+    query_result$type[query_result$type == 'primary'] <- type
 
     # return
     query_result
