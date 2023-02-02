@@ -1,24 +1,36 @@
-designers <- function(wait = 5) {
+designers <- function(wait = 5, verbose = FALSE) {
     # designers link
     link <- 'https://boardgamegeek.com/browse/boardgamedesigner'
 
     # get last page index
     last_page <- last_page_index(link)
+    if (verbose)
+        message(paste0('Number of HTML pages to scrape: ', last_page))
 
     # loop on pages
     designers <- dplyr::tibble()
     for (i in 1:last_page) {
+        # log
+        if (verbose)
+            message(paste0('Currently scraping HTML page no. ', i))
+
         # retrieve page i
         page_i <- glue::glue('{link}/page/{i}')
         page_i <- rvest::read_html(page_i)
 
         # grab designers of page i
-        designers_i     <- rvest::html_text(rvest::html_elements(page, 'table > tr > td > a'))
-        designers_i_ids <- rvest::html_attr(rvest::html_elements(page, 'table > tr > td > a'), 'href')
+        designers_i     <- rvest::html_text(rvest::html_elements(page_i, 'table > tr > td > a'))
+        designers_i_ids <- rvest::html_attr(rvest::html_elements(page_i, 'table > tr > td > a'), 'href')
         designers_i_ids <- stringr::str_extract(designers_i_ids, '[:digit:]+')
 
-        if (length(designers_i) == 0)
+        # precaution: break in case of empty page
+        if (length(designers_i) == 0) {
+            # log
+            if (verbose)
+                message(paste0('HTML page no. ', i, ' is empty! No data found.'))
+
             break
+        }
 
         # append
         designers <- rbind(designers, dplyr::tibble(designer_id = designers_i_ids, designer_name = designers_i))
