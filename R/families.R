@@ -18,10 +18,8 @@ families <- function(wait = 5, verbose = FALSE) {
         page_i <- glue::glue('{link}/page/{i}')
         page_i <- rvest::read_html(page_i)
 
-        # grab families of page i
-        families_i     <- rvest::html_text(rvest::html_elements(page_i, 'table > tr > td > a'))
-        families_i_ids <- rvest::html_attr(rvest::html_elements(page_i, 'table > tr > td > a'), 'href')
-        families_i_ids <- stringr::str_extract(families_i_ids, '[:digit:]+')
+        # families of page i
+        families_i <- rvest::html_elements(page_i, 'table > tr > td > a')
 
         # precaution: break in case of empty page
         if (length(families_i) == 0) {
@@ -32,8 +30,21 @@ families <- function(wait = 5, verbose = FALSE) {
             break
         }
 
+        # parse
+        families_i <-
+            purrr::map_dfr(
+                families_i,
+                function(item) {
+                    family_id   <- empty_to_na(rvest::html_attr(families_i, 'href'))
+                    family_id   <- stringr::str_extract(family_id, '[:digit:]+')
+                    family_name <- empty_to_na(rvest::html_text(families_i))
+                    dplyr::tibble(family_id, family_name)
+                }
+            )
+        families_i <- dplyr::distinct(families_i)
+
         # append
-        families <- rbind(families, dplyr::tibble(family_id = families_i_ids, family_name = families_i))
+        families <- rbind(families, families_i)
 
         # duration to sleep so BGG website would not block us
         Sys.sleep(wait)

@@ -18,10 +18,8 @@ designers <- function(wait = 5, verbose = FALSE) {
         page_i <- glue::glue('{link}/page/{i}')
         page_i <- rvest::read_html(page_i)
 
-        # grab designers of page i
-        designers_i     <- rvest::html_text(rvest::html_elements(page_i, 'table > tr > td > a'))
-        designers_i_ids <- rvest::html_attr(rvest::html_elements(page_i, 'table > tr > td > a'), 'href')
-        designers_i_ids <- stringr::str_extract(designers_i_ids, '[:digit:]+')
+        # designers of page i
+        designers_i <- rvest::html_elements(page_i, 'table > tr > td > a')
 
         # precaution: break in case of empty page
         if (length(designers_i) == 0) {
@@ -32,8 +30,21 @@ designers <- function(wait = 5, verbose = FALSE) {
             break
         }
 
+        # parse
+        designers_i <-
+            purrr::map_dfr(
+                designers_i,
+                function(item) {
+                    designer_id   <- empty_to_na(rvest::html_attr(designers_i, 'href'))
+                    designer_id   <- stringr::str_extract(designer_id, '[:digit:]+')
+                    designer_name <- empty_to_na(rvest::html_text(designers_i))
+                    dplyr::tibble(designer_id, designer_name)
+                }
+            )
+        designers_i <- dplyr::distinct(designers_i)
+
         # append
-        designers <- rbind(designers, dplyr::tibble(designer_id = designers_i_ids, designer_name = designers_i))
+        designers <- rbind(designers, designers_i)
 
         # duration to sleep so BGG website would not block us
         Sys.sleep(wait)
