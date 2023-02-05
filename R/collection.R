@@ -1,6 +1,6 @@
-user_collection <- function(user) {
+collection <- function(username) {
     # user collection link
-    link <- paste0('https://boardgamegeek.com/xmlapi2/collection?username=', user, '&stats=1')
+    link <- paste0('https://boardgamegeek.com/xmlapi2/collection?username=', username, '&stats=1')
 
     # obtain html page
     html_page <- rvest::read_html(link)
@@ -94,8 +94,8 @@ user_collection <- function(user) {
 
     # convert to data frame
     collectionitems <- dplyr::bind_cols(features)
-    collectionitems <- dplyr::mutate(collectionitems, user = user)
-    collectionitems <- dplyr::select(collectionitems, user, dplyr::everything())
+    collectionitems <- dplyr::mutate(collectionitems, username = username)
+    collectionitems <- dplyr::select(collectionitems, username, dplyr::everything())
 
     # return
     collectionitems
