@@ -1,6 +1,4 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 # The `bggscraper` library
 
 <!-- badges: start -->
@@ -59,7 +57,7 @@ collection_items <- user_collection(user)
 games_details <- list()
 for (i in 1:nrow(collection_items)) {
     # get details for current item
-    games_details[[as.character(collection_items$object_id[[i]])]] <- game_info(collection_items$object_id[[i]])
+    games_details[[as.character(collection_items$object_id[[i]])]] <- thing(collection_items$object_id[[i]])
     
     # 5-second sleep so BGG website would not block us
     Sys.sleep(5)
@@ -121,25 +119,25 @@ top_K_games_ids <- top_k_games_ids(k = 10)
 games_details <- list()
 for (id in top_K_games_ids) {
     # get details for current game
-    games_details[[id]] <- game_info(id)
+    games_details[[id]] <- thing(id)
     current_games_details <- games_details[[id]]
     
     # print current game id and name
-    print(paste0(id, ': ', current_games_details$value[current_games_details$feature == 'name']))
+    print(glue::glue("{id}: {current_games_details$value[current_games_details$feature == 'name']}"))
     
     # 5-second sleep so BGG website would not block us
     Sys.sleep(5)
 }
 ```
 ``` r
-#> [1] "174430: Gloomhaven"
-#> [1] "224517: Brass: Birmingham"
-#> [1] "161936: Pandemic Legacy: Season 1"
-#> [1] "342942: Ark Nova"
-#> [1] "233078: Twilight Imperium: Fourth Edition"
-#> [1] "167791: Terraforming Mars"
-#> [1] "291457: Gloomhaven: Jaws of the Lion"
-#> [1] "187645: Star Wars: Rebellion"
-#> [1] "115746: War of the Ring: Second Edition"
-#> [1] "162886: Spirit Island"
+#> 174430: Gloomhaven
+#> 224517: Brass: Birmingham
+#> 161936: Pandemic Legacy: Season 1
+#> 342942: Ark Nova
+#> 233078: Twilight Imperium: Fourth Edition
+#> 167791: Terraforming Mars
+#> 291457: Gloomhaven: Jaws of the Lion
+#> 187645: Star Wars: Rebellion
+#> 115746: War of the Ring: Second Edition
+#> 162886: Spirit Island
 ```

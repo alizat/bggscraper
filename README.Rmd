@@ -20,7 +20,10 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-`bggscraper` is an R package that scrapes all sorts of (publicly accessible) data from the [Board Game Geek](boardgamegeek.com) website. It depends heavily on the [BGG XML API2](https://boardgamegeek.com/wiki/page/BGG_XML_API2) library.
+`bggscraper` is an R package that scrapes all sorts of (publicly
+accessible) data from the [Board Game Geek](boardgamegeek.com) website.
+It depends heavily on the [BGG XML
+API2](https://boardgamegeek.com/wiki/page/BGG_XML_API2) library.
 
 ***Note that this is a work in progress. However, I intend to make it useful and usable soon (by end of March, 2023).***
 
@@ -59,9 +62,9 @@ collection_items <- user_collection(user)
 games_details <- list()
 for (i in 1:nrow(collection_items)) {
     # get details for current item
-    games_details[[as.character(collection_items$object_id[[i]])]] <- game_info(collection_items$object_id[[i]])
+    games_details[[as.character(collection_items$object_id[[i]])]] <- thing(collection_items$object_id[[i]])
     
-    # sleep 5 seconds (to avoid getting blocked for too many requests in short time)
+    # 5-second sleep so BGG website would not block us
     Sys.sleep(5)
 }
 
@@ -81,13 +84,13 @@ top_K_games_ids <- top_k_games_ids(k = 10)
 games_details <- list()
 for (id in top_K_games_ids) {
     # get details for current game
-    games_details[[id]] <- game_info(id)
+    games_details[[id]] <- thing(id)
     current_games_details <- games_details[[id]]
     
     # print current game id and name
-    print(paste0(id, ': ', current_games_details$value[current_games_details$feature == 'name']))
+    print(glue::glue("{id}: {current_games_details$value[current_games_details$feature == 'name']}"))
     
-    # sleep 5 seconds (to avoid getting blocked for too many requests in short time)
+    # 5-second sleep so BGG website would not block us
     Sys.sleep(5)
 }
 ```
