@@ -27,5 +27,5 @@ features_extractor <- function(elements, features) {
     }
 
     # return
-    properties
+    dplyr::as_tibble(properties)
 }
