@@ -22,7 +22,13 @@ features_extractor <- function(elements, features) {
         }
 
         # adjust feature names
-        names(properties_i) <- names(features)
+        if (is.null(names(features))) {
+            names(properties_i) <- stringr::str_remove(features, '^::')
+        } else {
+            names(properties_i) <- names(features)
+        }
+
+        # append
         properties <- rbind(properties, dplyr::mutate_all(data.frame(properties_i), as.character))
     }
 
