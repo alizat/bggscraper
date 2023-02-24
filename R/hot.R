@@ -1,6 +1,6 @@
 hot <- function(type = 'boardgame') {
     # link
-    link <- 'https://boardgamegeek.com/xmlapi2/hot?type={type}'
+    link <- glue::glue('https://boardgamegeek.com/xmlapi2/hot?type={type}')
 
     # html page
     page <- rvest::read_html(link)
