@@ -17,4 +17,6 @@ Imports:
     purrr,
     rvest,
     stringr,
-    tibble
+    tibble,
+    lubridate,
+    assertthat
