@@ -1,3 +1,12 @@
+#' Mechanics of board games
+#'
+#' @return a data frame containing all mechanics of board games.
+#'
+#' @seealso [categories()]
+#'
+#' @examples
+#' bg_mechanics <- mechanics()
+#' bg_mechanics
 mechanics <- function() {
     # mechanics link
     link <- 'https://boardgamegeek.com/browse/boardgamemechanic'

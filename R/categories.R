@@ -1,3 +1,12 @@
+#' Categories of board games
+#'
+#' @return a data frame containing all categories of board games.
+#'
+#' @seealso [mechanics()]
+#'
+#' @examples
+#' bg_categories <- categories()
+#' bg_categories
 categories <- function() {
     # categories link
     link <- 'https://boardgamegeek.com/browse/boardgamecategory'

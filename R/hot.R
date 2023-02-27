@@ -1,3 +1,14 @@
+#' Hot items nowadays
+#'
+#' @param type type of hot items to return. Possible values are `boardgame`
+#'   (default), `rpg`, `videogame`, `boardgameperson`, `rpgperson`,
+#'   `boardgamecompany`, `rpgcompany` and `videogamecompany`.
+#'
+#' @return a data frame containing nowadays' hot items.
+#'
+#' @examples
+#' hot_items_df <- hot()
+#' hot_items_df
 hot <- function(type = 'boardgame') {
     # link
     link <- glue::glue('https://boardgamegeek.com/xmlapi2/hot?type={type}')
