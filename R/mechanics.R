@@ -1,8 +1,11 @@
 #' Mechanics of board games
 #'
-#' @return a data frame containing all mechanics of board games.
+#' @description \code{mechanics()} retrieves the board game mechanics that are
+#'   present at \href{http://boardgamegeek.com}{Board Game Geek}.
 #'
-#' @seealso [categories()]
+#' @return A data frame containing all mechanics of board games (as per BGG).
+#'
+#' @seealso \code{\link{categories}}
 #'
 #' @examples
 #' bg_mechanics <- mechanics()

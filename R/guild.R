@@ -1,3 +1,15 @@
+#' Guild Info
+#'
+#' @param guild_id id of the guild you wish to retrieve
+#' @param members include member roster in the results? (default: \code{TRUE})
+#' @param sort how to sort the members list. Valid values are \code{"username"}
+#'   (default) and \code{"date"}.
+#'
+#' @return A list containing two data frames: \code{"guild_details"} and
+#'   \code{"members_info"}
+#'
+#' @examples
+#' guild(1299)
 guild <- function(guild_id, members = 1, sort = 'username') {
     # link
     link <- glue::glue('https://boardgamegeek.com/xmlapi2/guild?id={guild_id}&members={members}&sort={sort}')
@@ -6,7 +18,7 @@ guild <- function(guild_id, members = 1, sort = 'username') {
     page <- rvest::read_html(link)
 
     # guild info
-    guild_info <- rvest::html_elements(page, 'guild')
+    guild_details <- rvest::html_elements(page, 'guild')
     features <-
         list(
             guild_id = '::id',
@@ -23,7 +35,7 @@ guild <- function(guild_id, members = 1, sort = 'username') {
             postalcode = 'location::postalcode',
             country = 'location::country'
         )
-    guild_info <- features_extractor(guild_info, features)
+    guild_details <- features_extractor(guild_details, features)
 
     # members info
     num_members <- as.numeric(rvest::html_attr(rvest::html_elements(page, 'members'), 'count'))
@@ -44,7 +56,7 @@ guild <- function(guild_id, members = 1, sort = 'username') {
 
     # return
     list(
-        guild_info   = guild_info,
-        members_info = members_info
+        guild_details = guild_details,
+        members_info  = members_info
     )
 }

@@ -7,15 +7,16 @@
 hot(type = "boardgame")
 }
 \arguments{
-\item{type}{type of hot items to return. Possible values are `boardgame`
-(default), `rpg`, `videogame`, `boardgameperson`, `rpgperson`,
-`boardgamecompany`, `rpgcompany` and `videogamecompany`.}
+\item{type}{type of hot items to return. Possible values are
+\code{"boardgame"} (default), \code{"rpg"}, \code{"videogame"},
+\code{"boardgameperson"}, \code{"rpgperson"}, \code{"boardgamecompany"},
+\code{"rpgcompany"} and \code{"videogamecompany"}.}
 }
 \value{
-a data frame containing nowadays' hot items.
+A data frame containing nowadays' hot items.
 }
 \description{
-Hot items nowadays
+\code{hot()} retrieves the items that are "hot" nowadays.
 }
 \examples{
 hot_items_df <- hot()

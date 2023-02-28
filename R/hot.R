@@ -1,10 +1,13 @@
 #' Hot items nowadays
 #'
-#' @param type type of hot items to return. Possible values are `boardgame`
-#'   (default), `rpg`, `videogame`, `boardgameperson`, `rpgperson`,
-#'   `boardgamecompany`, `rpgcompany` and `videogamecompany`.
+#' @description \code{hot()} retrieves the items that are "hot" nowadays.
 #'
-#' @return a data frame containing nowadays' hot items.
+#' @param type type of hot items to return. Possible values are
+#'   \code{"boardgame"} (default), \code{"rpg"}, \code{"videogame"},
+#'   \code{"boardgameperson"}, \code{"rpgperson"}, \code{"boardgamecompany"},
+#'   \code{"rpgcompany"} and \code{"videogamecompany"}.
+#'
+#' @return A data frame containing nowadays' hot items.
 #'
 #' @examples
 #' hot_items_df <- hot()

@@ -7,15 +7,16 @@
 categories()
 }
 \value{
-a data frame containing all categories of board games.
+A data frame containing all categories of board games.
 }
 \description{
-Categories of board games
+\code{categories()} retrieves the board game categories that are
+  present at \href{http://boardgamegeek.com}{Board Game Geek}.
 }
 \examples{
 bg_categories <- categories()
 bg_categories
 }
 \seealso{
-[mechanics()]
+\code{\link{mechanics}}
 }

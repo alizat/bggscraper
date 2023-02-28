@@ -1,8 +1,11 @@
 #' Categories of board games
 #'
-#' @return a data frame containing all categories of board games.
+#' @description \code{categories()} retrieves the board game categories that are
+#'   present at \href{http://boardgamegeek.com}{Board Game Geek}.
 #'
-#' @seealso [mechanics()]
+#' @return A data frame containing all categories of board games (as per BGG).
+#'
+#' @seealso \code{\link{mechanics}}
 #'
 #' @examples
 #' bg_categories <- categories()
