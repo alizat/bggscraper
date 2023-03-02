@@ -7,7 +7,7 @@
 categories()
 }
 \value{
-A data frame containing all categories of board games.
+A data frame containing all categories of board games (as per BGG).
 }
 \description{
 \code{categories()} retrieves the board game categories that are

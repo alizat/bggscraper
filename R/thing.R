@@ -85,7 +85,7 @@ thing <- function(ids) {
         # convert to data frame
         features <- purrr::map2_dfr(names(features), features, ~ tibble::tibble(feature = .x, value = .y))
         features[['id']]   <- rvest::html_attr(items[[i]], 'id')
-        features <- dplyr::select(features, id, feature, value)
+        features <- dplyr::select(features, dplyr::all_of(c('id', 'feature', 'value')))
 
         # save features
         items_details[[i]] <- features

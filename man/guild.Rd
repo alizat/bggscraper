@@ -2,13 +2,25 @@
 % Please edit documentation in R/guild.R
 \name{guild}
 \alias{guild}
-\title{Title}
+\title{Guild Info}
 \usage{
-guild(guild_id, members = 1, sort = "username")
+guild(guild_id, members = 1, sort_by = "username")
 }
 \arguments{
-\item{sort}{}
+\item{guild_id}{id of the guild you wish to retrieve}
+
+\item{members}{include member roster in the results? (default: \code{TRUE})}
+
+\item{sort_by}{how to sort the members list. Valid values are \code{"username"}
+(default) and \code{"date"}.}
+}
+\value{
+A list containing two data frames: \code{"guild_details"} and
+  \code{"members_info"}
 }
 \description{
-Title
+Guild Info
+}
+\examples{
+guild(1299)
 }
