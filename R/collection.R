@@ -1,3 +1,13 @@
+#' User's Collection
+#'
+#' @param username name of the user to retrieve their collection
+#'
+#' @return Collection of games for the specified user, include those that they
+#' own or want to buy/play.
+#'
+#' @examples
+#' my_collection <- collection('alizat')
+#' my_collection
 collection <- function(username) {
     # user collection link
     link <- paste0('https://boardgamegeek.com/xmlapi2/collection?username=', username, '&stats=1')
