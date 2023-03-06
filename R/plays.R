@@ -1,3 +1,30 @@
+#' Plays of a specific item
+#'
+#' @description \code{plays()} retrieves info on either plays of a specific
+#'   item, plays by a specific user or plays of a specific item by a specific
+#'   user.
+#'
+#' @param item_id id of item to retrieve plays information on. At least one of
+#'   \code{item_id} and \code{username} needs to be supplied.
+#' @param username username of user to retrieve plays for. At least one of
+#'   \code{item_id} and \code{username} needs to be supplied.
+#' @param type type of the item you want to request play information for. Valid
+#'   values are \code{"thing"} and \code{"family"}.
+#' @param mindate if supplied, returns only plays of specified date or later.
+#' @param maxdate if supplied, returns only plays of specified date or previous.
+#' @param subtype filters plays by supplied subtype. Valid values are
+#'   \code{"boardgame"} (default), \code{"boardgameexpansion"},
+#'   \code{"boardgameaccessory"}, \code{"boardgameintegration"},
+#'   \code{"boardgamecompilation"}, \code{"boardgameimplementation"},
+#'   \code{"rpg"}, \code{"rpgitem"} and \code{"videogame"}
+#' @param wait number of seconds to wait between pages while scraping to avoid
+#'   being blocked by BGG (default is 5 seconds)
+#'
+#' @return Plays info of supplied item and/or username
+#'
+#' @examples
+#' plays_3_wishes <- plays(198836)
+#' plays_3_wishes
 plays <- function(item_id = NULL,
                   username = NULL,
                   type = NULL,

@@ -1,6 +1,6 @@
 #' Extract features from HTML elements
 #'
-#' @description \code{features_extractor} obtains, for a list of HTML elements,
+#' @description \code{features_extractor()} obtains, for a list of HTML elements,
 #'   a set of features that are given as input.
 #'
 #' @param elements a list of HTML elements
@@ -14,7 +14,8 @@
 #' @examples
 #' my_html <- rvest::read_html('https://boardgamegeek.com/xmlapi2/collection?username=alizat')
 #' my_elements <- rvest::html_elements(my_html, 'item')
-#' features_extractor(my_elements, c('name', 'yearpublished', 'status::own', 'status::wanttoplay', 'status::wanttobuy'))
+#' my_features <- c('name', 'status::own', 'status::wanttoplay', 'status::wanttobuy')
+#' features_extractor(my_elements, my_features)
 features_extractor <- function(elements, features) {
     properties <- dplyr::tibble()
     for (i in 1:length(elements)) {
