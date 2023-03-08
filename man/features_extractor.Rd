@@ -2,7 +2,7 @@
 % Please edit documentation in R/features_extractor.R
 \name{features_extractor}
 \alias{features_extractor}
-\title{Extract features from HTML elements}
+\title{Extract Features from HTML Elements}
 \usage{
 features_extractor(elements, features)
 }

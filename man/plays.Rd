@@ -2,7 +2,7 @@
 % Please edit documentation in R/plays.R
 \name{plays}
 \alias{plays}
-\title{Plays of a specific item}
+\title{Plays of a Specific Item and/or User}
 \usage{
 plays(
   item_id = NULL,

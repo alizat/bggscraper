@@ -2,7 +2,7 @@
 % Please edit documentation in R/mechanics.R
 \name{mechanics}
 \alias{mechanics}
-\title{Mechanics of board games}
+\title{Mechanics of Board Games}
 \usage{
 mechanics()
 }

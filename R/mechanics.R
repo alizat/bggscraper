@@ -1,4 +1,4 @@
-#' Mechanics of board games
+#' Mechanics of Board Games
 #'
 #' @description \code{mechanics()} retrieves the board game mechanics that are
 #'   present at \href{http://boardgamegeek.com}{Board Game Geek}.

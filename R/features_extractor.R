@@ -1,4 +1,4 @@
-#' Extract features from HTML elements
+#' Extract Features from HTML Elements
 #'
 #' @description \code{features_extractor()} obtains, for a list of HTML elements,
 #'   a set of features that are given as input.

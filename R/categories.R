@@ -1,4 +1,4 @@
-#' Categories of board games
+#' Categories of Board Games
 #'
 #' @description \code{categories()} retrieves the board game categories that are
 #'   present at \href{http://boardgamegeek.com}{Board Game Geek}.

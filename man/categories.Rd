@@ -2,7 +2,7 @@
 % Please edit documentation in R/categories.R
 \name{categories}
 \alias{categories}
-\title{Categories of board games}
+\title{Categories of Board Games}
 \usage{
 categories()
 }

@@ -1,4 +1,4 @@
-#' Plays of a specific item
+#' Plays of a Specific Item and/or User
 #'
 #' @description \code{plays()} retrieves info on either plays of a specific
 #'   item, plays by a specific user or plays of a specific item by a specific
