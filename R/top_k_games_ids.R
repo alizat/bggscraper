@@ -1,3 +1,14 @@
+#' Top K Games IDs
+#'
+#' @param k the number of top games that you want ids for
+#' @param wait number of seconds to wait between HTML pages as they are scraped
+#'
+#' @return
+#' Games ids for the top k games
+#'
+#' @examples
+#' top_500_game_ids <- top_k_games_ids(k = 500)
+#' top_500_game_ids
 top_k_games_ids <- function(k = 100, wait = 5) {
     # initialize
     games_ids_all <- c()
