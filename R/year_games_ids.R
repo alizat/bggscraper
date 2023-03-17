@@ -1,3 +1,16 @@
+#' Specific Year's Games IDs
+#'
+#' @param y year to get games ids for
+#' @param wait number of seconds to wait between HTML pages as they are scraped
+#'
+#' @return
+#' Games IDs for the top k games
+#'
+#' @seealso \code{\link{top_k_games_ids}}
+#'
+#' @examples
+#' year_1995_game_ids <- year_games_ids(y = 1995)
+#' year_1995_game_ids
 year_games_ids <- function(y, wait = 5) {
     # initialize
     games_ids_all <- c()

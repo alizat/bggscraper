@@ -1,10 +1,12 @@
 #' Top K Games IDs
 #'
-#' @param k the number of top games that you want ids for
+#' @param k the number of top games that you want IDs for
 #' @param wait number of seconds to wait between HTML pages as they are scraped
 #'
 #' @return
-#' Games ids for the top k games
+#' Games IDs for the top k games
+#'
+#' @seealso \code{\link{year_games_ids}}
 #'
 #' @examples
 #' top_500_game_ids <- top_k_games_ids(k = 500)

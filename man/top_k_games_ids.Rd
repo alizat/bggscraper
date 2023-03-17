@@ -7,12 +7,12 @@
 top_k_games_ids(k = 100, wait = 5)
 }
 \arguments{
-\item{k}{the number of top games that you want ids for}
+\item{k}{the number of top games that you want IDs for}
 
 \item{wait}{number of seconds to wait between HTML pages as they are scraped}
 }
 \value{
-Games ids for the top k games
+Games IDs for the top k games
 }
 \description{
 Top K Games IDs
@@ -20,4 +20,7 @@ Top K Games IDs
 \examples{
 top_500_game_ids <- top_k_games_ids(k = 500)
 top_500_game_ids
+}
+\seealso{
+\code{\link{year_games_ids}}
 }
