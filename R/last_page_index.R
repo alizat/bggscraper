@@ -1,3 +1,17 @@
+#' Last Page Index
+#'
+#' @description \code{last_page_index()} gets the index of the last page on a
+#'   given BGG link
+#'
+#' @param link BGG link for which to get the index of the last page
+#'
+#' @return
+#' Last page index for the given BGG link
+#'
+#' @examples
+#' link <- 'https://boardgamegeek.com/browse/boardgamedesigner'
+#' indx <- last_page_index(link)
+#' indx
 last_page_index <- function(link) {
     # paginator
     paginator <- rvest::read_html(link)
