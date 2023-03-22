@@ -1,16 +1,44 @@
+#' BGG Search
+#'
+#' @param query keywords of item that you are looking for
+#' @param type type of item. Possible values are \code{"rpgitem"},
+#'   \code{"videogame"}, \code{"boardgame"}, \code{"boardgameaccessory"} and
+#'   \code{"boardgameexpansion"}. Specifying multiple types separated by commas
+#'   is allowed (see examples below).
+#' @param exact whether the returned result should match the search query
+#'   perfectly (default is \code{0})
+#'
+#' @return
+#' Data frame containing search results.
+#'
+#' @examples
+#' searchbgg(query = 'shipshape')
+#' searchbgg(query = 'shipshape', type = 'boardgame')
+#' searchbgg(query = 'dune imperium')
+#' searchbgg(query = 'water', type = 'rpgitem')
 searchbgg <- function(query,
                       type = NULL,
                       exact = 0) {
+    # adjust query (if necessary)
+    query <- stringr::str_squish(query)
+    query <- stringr::str_replace_all(query, ' ', '+')
+
+    # features of interest
+    my_features <-
+        list(
+            item_id = '::id',
+            item_type = 'name::type',
+            item_name = 'name::value',
+            item_yearpublished = 'yearpublished::value'
+        )
+
     # if type is NULL, it will be taken to mean BOTH board games and expansions
     if (is.null(type) || type == 'boardgame') {
         # both board games and expansions
         link <- glue::glue('https://boardgamegeek.com/xmlapi2/search?query={query}&type=boardgame')
         page <- rvest::read_html(link)
-        all_items       <- rvest::html_elements(page, 'item')
-        all_items_ids   <- rvest::html_attr(all_items, 'id')
-        all_items_types <- rvest::html_attr(rvest::html_elements(all_items, 'name'), 'type')
-        all_items_names <- rvest::html_attr(rvest::html_elements(all_items, 'name'), 'value')
-        all_items_year  <- rvest::html_attr(rvest::html_elements(all_items, 'yearpublished'), 'value')
+        all_items <- rvest::html_elements(page, 'item')
+        query_result <- features_extractor(all_items, my_features)
 
         # just expansions
         link <- glue::glue('https://boardgamegeek.com/xmlapi2/search?query={query}&type=boardgameexpansion')
@@ -21,13 +49,10 @@ searchbgg <- function(query,
         # if 'type' was specified as 'boardgame'...
         if (!is.null(type) && type == 'boardgame') {
             # ... exclude expansions
-            all_items_types <- all_items_types[!(all_items_ids %in% expansions_ids)]
-            all_items_names <- all_items_names[!(all_items_ids %in% expansions_ids)]
-            all_items_year  <- all_items_year[!(all_items_ids %in% expansions_ids)]
-            all_items_ids   <- all_items_ids[!(all_items_ids %in% expansions_ids)]
+            query_result <- dplyr::filter(query_result, !('item_id' %in% expansions_ids))
         } else {
             # otherwise, keep all items and adjust type in 'all_items_types'
-            all_items_types[all_items_ids %in% expansions_ids] <- 'boardgameexpansion'
+            query_result$item_type[query_result$item_id %in% expansions_ids] <- 'boardgameexpansion'
         }
 
     } else {
@@ -35,24 +60,14 @@ searchbgg <- function(query,
         link <- glue::glue('https://boardgamegeek.com/xmlapi2/search?query={query}&type={type}')
         page <- rvest::read_html(link)
         all_items       <- rvest::html_elements(page, 'item')
-        all_items_ids   <- rvest::html_attr(all_items, 'id')
-        all_items_types <- rvest::html_attr(rvest::html_elements(all_items, 'name'), 'type')
-        all_items_names <- rvest::html_attr(rvest::html_elements(all_items, 'name'), 'value')
-        all_items_year  <- rvest::html_attr(rvest::html_elements(all_items, 'yearpublished'), 'value')
+        query_result <- features_extractor(all_items, my_features)
     }
 
-    # query result
-    query_result <-
-        dplyr::tibble(
-        item_id            = all_items_ids,
-        item_type          = all_items_types,
-        item_name          = all_items_names,
-        item_yearpublished = all_items_year
-    )
+    # adjust item type in query results
     if (is.null(type)) {
         type <- 'boardgame'
     }
-    query_result$type[query_result$type == 'primary'] <- type
+    query_result$item_type[query_result$item_type == 'primary'] <- type
 
     # return
     query_result
