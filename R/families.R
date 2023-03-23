@@ -1,4 +1,4 @@
-families <- function(wait = 5, verbose = FALSE) {
+families <- function(wait = 10, verbose = FALSE) {
     # families link
     link <- 'https://boardgamegeek.com/browse/boardgamefamily'
 

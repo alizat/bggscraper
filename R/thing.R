@@ -6,8 +6,8 @@
 #' @param ids IDs of the items that you wish retrieve the information for.
 #'
 #' @return
-#' A data frame containing the details of the items for which the IDs were
-#' supplied.
+#' Data frame containing the details of the items for which the IDs were
+#' supplied
 #'
 #' @examples
 #' games_details <- thing(c(158600, 194607, 40849))

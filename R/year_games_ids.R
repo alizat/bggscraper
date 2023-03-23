@@ -4,14 +4,14 @@
 #' @param wait number of seconds to wait between HTML pages as they are scraped
 #'
 #' @return
-#' Games IDs for the top k games
+#' Games IDs for the select year, \code{y}
 #'
 #' @seealso \code{\link{top_k_games_ids}}
 #'
 #' @examples
 #' year_1995_game_ids <- year_games_ids(y = 1995)
 #' year_1995_game_ids
-year_games_ids <- function(y, wait = 5) {
+year_games_ids <- function(y, wait = 10) {
     # initialize
     games_ids_all <- c()
 

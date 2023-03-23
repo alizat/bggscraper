@@ -8,7 +8,7 @@
 #'   that are given as input
 #'
 #' @return
-#' A data frame containing the retrieved features for the HTML elements that are
+#' Data frame containing the retrieved features for the HTML elements that are
 #' given as input
 #'
 #' @examples

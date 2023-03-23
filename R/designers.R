@@ -1,4 +1,19 @@
-designers <- function(wait = 5, verbose = FALSE) {
+#' Designers of Board Games
+#'
+#' @param wait number of seconds to wait between pages while scraping to avoid
+#'   being blocked by BGG (default is 10 seconds)
+#' @param verbose whether to print supplementary text (shows intermediate
+#'   progress)
+#'
+#' @return
+#' Data frame containing list of designers from BGG website
+#'
+#' @seealso \code{\link{categories}} \code{\link{mechanics}}
+#'   \code{\link{families}}
+#'
+#' @examples
+#' designers(verbose = TRUE)
+designers <- function(wait = 10, verbose = FALSE) {
     # designers link
     link <- 'https://boardgamegeek.com/browse/boardgamedesigner'
 

@@ -18,9 +18,10 @@
 #'   \code{"boardgamecompilation"}, \code{"boardgameimplementation"},
 #'   \code{"rpg"}, \code{"rpgitem"} and \code{"videogame"}
 #' @param wait number of seconds to wait between pages while scraping to avoid
-#'   being blocked by BGG (default is 5 seconds)
+#'   being blocked by BGG (default is 10 seconds)
 #'
-#' @return Plays info of supplied item and/or username
+#' @return
+#' Plays info of supplied item and/or username
 #'
 #' @examples
 #' plays_3_wishes <- plays(198836)
@@ -31,7 +32,7 @@ plays <- function(item_id = NULL,
                   mindate = NULL,
                   maxdate = NULL,
                   subtype = NULL,
-                  wait = 5) {
+                  wait = 10) {
     # check that item id and/or user name was supplied
     assertthat::assert_that(!is.null(item_id) | !is.null(username))
 
