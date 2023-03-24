@@ -18,7 +18,7 @@ is allowed (see examples below).}
 perfectly (default is \code{0})}
 }
 \value{
-Data frame containing search results.
+Data frame containing search results
 }
 \description{
 BGG Search

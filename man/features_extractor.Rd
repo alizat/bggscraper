@@ -13,7 +13,7 @@ features_extractor(elements, features)
 that are given as input}
 }
 \value{
-A data frame containing the retrieved features for the HTML elements that are
+Data frame containing the retrieved features for the HTML elements that are
 given as input
 }
 \description{

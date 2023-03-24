@@ -11,7 +11,7 @@ plays(
   mindate = NULL,
   maxdate = NULL,
   subtype = NULL,
-  wait = 5
+  wait = 10
 )
 }
 \arguments{
@@ -35,7 +35,7 @@ values are \code{"thing"} and \code{"family"}.}
 \code{"rpg"}, \code{"rpgitem"} and \code{"videogame"}}
 
 \item{wait}{number of seconds to wait between pages while scraping to avoid
-being blocked by BGG (default is 5 seconds)}
+being blocked by BGG (default is 10 seconds)}
 }
 \value{
 Plays info of supplied item and/or username

@@ -1,3 +1,18 @@
+#' Families of Board Games
+#'
+#' @param wait number of seconds to wait between pages while scraping to avoid
+#'   being blocked by BGG (default is 10 seconds)
+#' @param verbose whether to print supplementary text (shows intermediate
+#'   progress)
+#'
+#' @return
+#' Data frame containing list of families from BGG website
+#'
+#' @seealso \code{\link{categories}} \code{\link{mechanics}}
+#'   \code{\link{designers}}
+#'
+#' @examples
+#' families(verbose = TRUE)
 families <- function(wait = 10, verbose = FALSE) {
     # families link
     link <- 'https://boardgamegeek.com/browse/boardgamefamily'

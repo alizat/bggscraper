@@ -10,8 +10,8 @@ thing(ids)
 \item{ids}{IDs of the items that you wish retrieve the information for.}
 }
 \value{
-A data frame containing the details of the items for which the IDs were
-supplied.
+Data frame containing the details of the items for which the IDs were
+supplied
 }
 \description{
 \code{thing()} retrieves the available information of the

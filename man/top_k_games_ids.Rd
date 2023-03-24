@@ -4,7 +4,7 @@
 \alias{top_k_games_ids}
 \title{Top K Games IDs}
 \usage{
-top_k_games_ids(k = 100, wait = 5)
+top_k_games_ids(k = 100, wait = 10)
 }
 \arguments{
 \item{k}{the number of top games that you want IDs for}

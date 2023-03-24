@@ -4,7 +4,7 @@
 \alias{year_games_ids}
 \title{Specific Year's Games IDs}
 \usage{
-year_games_ids(y, wait = 5)
+year_games_ids(y, wait = 10)
 }
 \arguments{
 \item{y}{year to get games ids for}
@@ -12,7 +12,7 @@ year_games_ids(y, wait = 5)
 \item{wait}{number of seconds to wait between HTML pages as they are scraped}
 }
 \value{
-Games IDs for the top k games
+Games IDs for the select year, \code{y}
 }
 \description{
 Specific Year's Games IDs

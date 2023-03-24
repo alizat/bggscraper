@@ -7,7 +7,7 @@
 mechanics()
 }
 \value{
-A data frame containing all mechanics of board games (as per BGG).
+Data frame containing all mechanics of board games (as per BGG)
 }
 \description{
 \code{mechanics()} retrieves the board game mechanics that are
@@ -18,5 +18,6 @@ bg_mechanics <- mechanics()
 bg_mechanics
 }
 \seealso{
-\code{\link{categories}}
+\code{\link{categories}} \code{\link{designers}}
+  \code{\link{families}}
 }
