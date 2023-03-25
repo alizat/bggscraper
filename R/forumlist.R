@@ -1,3 +1,17 @@
+#' Forum Lists for a Specified Item
+#'
+#' @description \code{forumlist()} retrieves the lists of forums available for
+#'   the specified item.
+#'
+#' @param id of the items that you wish retrieve the forum lists for.
+#' @param type type of the specified item
+#'
+#' @return
+#' Data frame containing list of available forums for the specified item
+#'
+#' @examples
+#' forumlist_pandemic_on_the_brink <- forumlist(40849)
+#' forumlist_pandemic_on_the_brink
 forumlist <- function(id, type = 'thing') {
     # forums
     link <- paste0('https://www.boardgamegeek.com/xmlapi2/forumlist?id=', id, '&type=', type)
