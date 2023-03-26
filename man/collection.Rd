@@ -10,11 +10,12 @@ collection(username)
 \item{username}{name of the user to retrieve their collection}
 }
 \value{
-Collection of games for the specified user, include those that they
-own or want to buy/play.
+Data frame containing the specified user's collection, including those that
+they own or want to buy/play.
 }
 \description{
-User's Collection
+\code{collection()} retrieves the board game collection for a
+  specified user from \href{http://boardgamegeek.com}{Board Game Geek}.
 }
 \examples{
 my_collection <- collection('alizat')

@@ -17,7 +17,8 @@ progress)}
 Data frame containing list of families from BGG website
 }
 \description{
-Families of Board Games
+\code{families()} retrieves the board game families that are
+  present at \href{http://boardgamegeek.com}{Board Game Geek}.
 }
 \examples{
 families(verbose = TRUE)

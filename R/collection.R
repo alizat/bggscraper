@@ -1,9 +1,13 @@
 #' User's Collection
 #'
+#' @description \code{collection()} retrieves the board game collection for a
+#'   specified user from \href{http://boardgamegeek.com}{Board Game Geek}.
+#'
 #' @param username name of the user to retrieve their collection
 #'
-#' @return Collection of games for the specified user, include those that they
-#' own or want to buy/play.
+#' @return
+#' Data frame containing the specified user's collection, including those that
+#' they own or want to buy/play.
 #'
 #' @examples
 #' my_collection <- collection('alizat')

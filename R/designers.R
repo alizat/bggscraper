@@ -1,5 +1,8 @@
 #' Designers of Board Games
 #'
+#' @description \code{designers()} retrieves the board game designers that are
+#'   present at \href{http://boardgamegeek.com}{Board Game Geek}.
+#'
 #' @param wait number of seconds to wait between pages while scraping to avoid
 #'   being blocked by BGG (default is 10 seconds)
 #' @param verbose whether to print supplementary text (shows intermediate

@@ -9,7 +9,8 @@ forumlist(id, type = "thing")
 \arguments{
 \item{id}{of the items that you wish retrieve the forum lists for.}
 
-\item{type}{type of the specified item}
+\item{type}{type of the specified item. Valid values are \code{"thing"} and
+\code{"family"}.}
 }
 \value{
 Data frame containing list of available forums for the specified item

@@ -4,7 +4,8 @@
 #'   the specified item.
 #'
 #' @param id of the items that you wish retrieve the forum lists for.
-#' @param type type of the specified item
+#' @param type type of the specified item. Valid values are \code{"thing"} and
+#'   \code{"family"}.
 #'
 #' @return
 #' Data frame containing list of available forums for the specified item

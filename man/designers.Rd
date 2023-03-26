@@ -17,7 +17,8 @@ progress)}
 Data frame containing list of designers from BGG website
 }
 \description{
-Designers of Board Games
+\code{designers()} retrieves the board game designers that are
+  present at \href{http://boardgamegeek.com}{Board Game Geek}.
 }
 \examples{
 designers(verbose = TRUE)
