@@ -2,18 +2,18 @@
 % Please edit documentation in R/forumlist.R
 \name{forumlist}
 \alias{forumlist}
-\title{Forum Lists for a Specified Item}
+\title{List of Forums for a Specified Item}
 \usage{
-forumlist(id, type = "thing")
+forumlist(forumlist_id, type = "thing")
 }
 \arguments{
-\item{id}{of the items that you wish retrieve the forum lists for.}
-
 \item{type}{type of the specified item. Valid values are \code{"thing"} and
 \code{"family"}.}
+
+\item{id}{id of the item that you wish retrieve the forum lists for.}
 }
 \value{
-Data frame containing list of available forums for the specified item
+Data frame containing list of available forums for the specified item.
 }
 \description{
 \code{forumlist()} retrieves the lists of forums available for
@@ -22,4 +22,7 @@ Data frame containing list of available forums for the specified item
 \examples{
 forumlist_pandemic_on_the_brink <- forumlist(40849)
 forumlist_pandemic_on_the_brink
+}
+\seealso{
+\code{\link{forum}} \code{\link{thread}}
 }

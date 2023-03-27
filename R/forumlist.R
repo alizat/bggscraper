@@ -1,37 +1,42 @@
-#' Forum Lists for a Specified Item
+#' List of Forums for a Specified Item
 #'
 #' @description \code{forumlist()} retrieves the lists of forums available for
 #'   the specified item.
 #'
-#' @param id of the items that you wish retrieve the forum lists for.
+#' @param id id of the item that you wish retrieve the forum lists for.
 #' @param type type of the specified item. Valid values are \code{"thing"} and
 #'   \code{"family"}.
 #'
 #' @return
-#' Data frame containing list of available forums for the specified item
+#' Data frame containing list of available forums for the specified item.
+#'
+#' @seealso \code{\link{forum}} \code{\link{thread}}
 #'
 #' @examples
 #' forumlist_pandemic_on_the_brink <- forumlist(40849)
 #' forumlist_pandemic_on_the_brink
-forumlist <- function(id, type = 'thing') {
+forumlist <- function(forumlist_id, type = 'thing') {
     # forums
-    link <- paste0('https://www.boardgamegeek.com/xmlapi2/forumlist?id=', id, '&type=', type)
+    link <- paste0('https://www.boardgamegeek.com/xmlapi2/forumlist?id=', forumlist_id, '&type=', type)
     forums <- rvest::html_elements(rvest::read_html(link), 'forum')
 
     # parse
-    forums <-
-        dplyr::tibble(
-            type         = type,
-            id           = rvest::html_attr(forums, 'id'),
-            groupid      = rvest::html_attr(forums, 'groupid'),
-            title        = rvest::html_attr(forums, 'title'),
-            noposting    = rvest::html_attr(forums, 'noposting'),
-            description  = rvest::html_attr(forums, 'description'),
-            numthreads   = rvest::html_attr(forums, 'numthreads'),
-            numposts     = rvest::html_attr(forums, 'numposts'),
-            lastpostdate = rvest::html_attr(forums, 'lastpostdate')
+    features_to_extract <-
+        list(
+            forum_id     = '::id',
+            groupid      = '::groupid',
+            title        = '::title',
+            noposting    = '::noposting',
+            description  = '::description',
+            numthreads   = '::numthreads',
+            numposts     = '::numposts',
+            lastpostdate = '::lastpostdate'
         )
+    forums_info <- features_extractor(forums, features_to_extract)
+    forums_info$forumlist_id <- forumlist_id
+    forums_info$type <- type
+    forums_info <- dplyr::select(forums_info, forumlist_id, type, dplyr::everything())
 
     # return
-    forums
+    forums_info
 }
