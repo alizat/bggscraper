@@ -24,6 +24,9 @@ features_extractor <- function(elements, features) {
             # is it an attribute?
             is_attribute <- stringr::str_detect(features[[j]], '::')
 
+            # is it the body?
+            is_body <- features[[j]] %in% c('', 'body')
+
             if (is_attribute) {
                 components <- unlist(stringr::str_split(features[[j]], '::'))
                 if (components[[1]] == '') {
@@ -31,6 +34,8 @@ features_extractor <- function(elements, features) {
                 } else {
                     value <- rvest::html_attr(rvest::html_elements(elements[[i]], components[[1]]), components[[2]])
                 }
+            } else if (is_body) {
+                value <- rvest::html_text(elements[[i]])
             } else {
                 value <- rvest::html_text(rvest::html_elements(elements[[i]], features[[j]]))
             }
