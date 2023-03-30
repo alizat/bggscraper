@@ -7,7 +7,7 @@
 #'
 #' @return
 #' List containing two data frames: \code{"guild_details"} and
-#' \code{"members_info"}
+#' \code{"members_info"}.
 #'
 #' @examples
 #' guild(1299)

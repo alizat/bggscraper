@@ -10,7 +10,7 @@
 #' @param username result to include user's top items?
 #'
 #' @return
-#' List containing the specified user's details.
+#' List containing the specified user's info.
 #'
 #' @seealso \code{\link{collection}}
 #'

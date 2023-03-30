@@ -10,7 +10,7 @@ last_page_index(link)
 \item{link}{BGG link for which to get the index of the last page}
 }
 \value{
-Last page index for the given BGG link
+Last page index for the given BGG link.
 }
 \description{
 \code{last_page_index()} gets the index of the last page on a

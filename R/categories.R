@@ -4,7 +4,7 @@
 #'   present at \href{http://boardgamegeek.com}{Board Game Geek}.
 #'
 #' @return
-#' Data frame containing all mechanics of board games (as per BGG)
+#' Data frame containing all mechanics of board games (as per BGG).
 #'
 #' @seealso \code{\link{mechanics}} \code{\link{designers}}
 #'   \code{\link{families}}

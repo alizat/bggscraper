@@ -12,7 +12,7 @@ year_games_ids(y, wait = 10)
 \item{wait}{number of seconds to wait between HTML pages as they are scraped}
 }
 \value{
-Games IDs for the select year, \code{y}
+Games IDs for the select year, \code{y}.
 }
 \description{
 Specific Year's Games IDs

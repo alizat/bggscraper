@@ -21,7 +21,7 @@
 #'   being blocked by BGG (default is 10 seconds)
 #'
 #' @return
-#' Plays info of supplied item and/or username
+#' Plays info of supplied item and/or username.
 #'
 #' @examples
 #' plays_3_wishes <- plays(198836)

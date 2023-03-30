@@ -14,7 +14,7 @@ being blocked by BGG (default is 10 seconds)}
 progress)}
 }
 \value{
-Data frame containing list of families from BGG website
+Data frame containing list of families from BGG website.
 }
 \description{
 \code{families()} retrieves the board game families that are

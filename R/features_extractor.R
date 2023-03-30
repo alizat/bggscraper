@@ -9,7 +9,7 @@
 #'
 #' @return
 #' Data frame containing the retrieved features for the HTML elements that are
-#' given as input
+#' given as input.
 #'
 #' @examples
 #' my_html <- rvest::read_html('https://boardgamegeek.com/xmlapi2/collection?username=alizat')

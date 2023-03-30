@@ -16,7 +16,7 @@ guild(guild_id, members = 1, sort_by = "username")
 }
 \value{
 List containing two data frames: \code{"guild_details"} and
-\code{"members_info"}
+\code{"members_info"}.
 }
 \description{
 Guild Info

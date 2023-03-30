@@ -10,7 +10,7 @@ user(username, buddies = 0, guilds = 0, hot = 0, top = 0)
 \item{username}{result to include user's top items?}
 }
 \value{
-List containing the specified user's details.
+List containing the specified user's info.
 }
 \description{
 \code{user()} retrieves the details for a specified user from

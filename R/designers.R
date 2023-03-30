@@ -9,7 +9,7 @@
 #'   progress)
 #'
 #' @return
-#' Data frame containing list of designers from BGG website
+#' Data frame containing list of designers from BGG website.
 #'
 #' @seealso \code{\link{categories}} \code{\link{mechanics}}
 #'   \code{\link{families}}

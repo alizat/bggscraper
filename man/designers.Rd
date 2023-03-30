@@ -14,7 +14,7 @@ being blocked by BGG (default is 10 seconds)}
 progress)}
 }
 \value{
-Data frame containing list of designers from BGG website
+Data frame containing list of designers from BGG website.
 }
 \description{
 \code{designers()} retrieves the board game designers that are

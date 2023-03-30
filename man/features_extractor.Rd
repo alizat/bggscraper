@@ -14,7 +14,7 @@ that are given as input}
 }
 \value{
 Data frame containing the retrieved features for the HTML elements that are
-given as input
+given as input.
 }
 \description{
 \code{features_extractor()} obtains, for a list of HTML elements,

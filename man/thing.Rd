@@ -11,7 +11,7 @@ thing(ids)
 }
 \value{
 Data frame containing the details of the items for which the IDs were
-supplied
+supplied.
 }
 \description{
 \code{thing()} retrieves the available information of the

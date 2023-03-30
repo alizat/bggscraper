@@ -7,7 +7,7 @@
 #'
 #' @return
 #' Data frame containing the details of the items for which the IDs were
-#' supplied
+#' supplied.
 #'
 #' @examples
 #' games_details <- thing(c(158600, 194607, 40849))

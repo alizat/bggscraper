@@ -38,7 +38,7 @@ values are \code{"thing"} and \code{"family"}.}
 being blocked by BGG (default is 10 seconds)}
 }
 \value{
-Plays info of supplied item and/or username
+Plays info of supplied item and/or username.
 }
 \description{
 \code{plays()} retrieves info on either plays of a specific

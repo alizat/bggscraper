@@ -6,7 +6,7 @@
 #' @param link BGG link for which to get the index of the last page
 #'
 #' @return
-#' Last page index for the given BGG link
+#' Last page index for the given BGG link.
 #'
 #' @examples
 #' link <- 'https://boardgamegeek.com/browse/boardgamedesigner'

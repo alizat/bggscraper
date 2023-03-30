@@ -12,7 +12,7 @@ top_k_games_ids(k = 100, wait = 10)
 \item{wait}{number of seconds to wait between HTML pages as they are scraped}
 }
 \value{
-Games IDs for the top k games
+Games IDs for the top k games.
 }
 \description{
 Top K Games IDs

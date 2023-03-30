@@ -9,7 +9,7 @@
 #'   perfectly (default is \code{0})
 #'
 #' @return
-#' Data frame containing search results
+#' Data frame containing search results.
 #'
 #' @examples
 #' searchbgg(query = 'shipshape')

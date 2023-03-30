@@ -4,7 +4,7 @@
 #' @param wait number of seconds to wait between HTML pages as they are scraped
 #'
 #' @return
-#' Games IDs for the select year, \code{y}
+#' Games IDs for the select year, \code{y}.
 #'
 #' @seealso \code{\link{top_k_games_ids}}
 #'
