@@ -15,7 +15,8 @@ year_games_ids(y, wait = 10)
 Games IDs for the select year, \code{y}.
 }
 \description{
-Specific Year's Games IDs
+\code{year_games_ids()} retrieves the ids of the games that came
+  out in the specified year.
 }
 \examples{
 year_1995_game_ids <- year_games_ids(y = 1995)

@@ -1,5 +1,7 @@
 #' BGG Search
 #'
+#' @description \code{searchbgg()} gets search results for supplied query.
+#'
 #' @param query keywords of item that you are looking for
 #' @param type type of item. Possible values are \code{"rpgitem"},
 #'   \code{"videogame"}, \code{"boardgame"}, \code{"boardgameaccessory"} and

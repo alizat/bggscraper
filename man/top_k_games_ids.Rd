@@ -15,7 +15,8 @@ top_k_games_ids(k = 100, wait = 10)
 Games IDs for the top k games.
 }
 \description{
-Top K Games IDs
+\code{top_k_games_ids()} retrieves the ids of the top \code{k}
+  games.
 }
 \examples{
 top_500_game_ids <- top_k_games_ids(k = 500)

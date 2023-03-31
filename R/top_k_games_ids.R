@@ -1,5 +1,8 @@
 #' Top K Games IDs
 #'
+#' @description \code{top_k_games_ids()} retrieves the ids of the top \code{k}
+#'   games.
+#'
 #' @param k the number of top games that you want IDs for
 #' @param wait number of seconds to wait between HTML pages as they are scraped
 #'

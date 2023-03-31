@@ -1,5 +1,8 @@
 #' Specific Year's Games IDs
 #'
+#' @description \code{year_games_ids()} retrieves the ids of the games that came
+#'   out in the specified year.
+#'
 #' @param y year to get games ids for
 #' @param wait number of seconds to wait between HTML pages as they are scraped
 #'

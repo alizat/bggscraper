@@ -1,5 +1,8 @@
 #' Guild Info
 #'
+#' @description \code{guild()} retrieves the info for the specified guild
+#'   (details and members list).
+#'
 #' @param guild_id id of the guild you wish to retrieve
 #' @param members include member roster in the results? (default: \code{TRUE})
 #' @param sort_by how to sort the members list. Valid values are

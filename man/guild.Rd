@@ -19,7 +19,8 @@ List containing two data frames: \code{"guild_details"} and
 \code{"members_info"}.
 }
 \description{
-Guild Info
+\code{guild()} retrieves the info for the specified guild
+  (details and members list).
 }
 \examples{
 guild(1299)

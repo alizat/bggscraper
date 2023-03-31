@@ -21,7 +21,7 @@ perfectly (default is \code{0})}
 Data frame containing search results.
 }
 \description{
-BGG Search
+\code{searchbgg()} gets search results for supplied query.
 }
 \examples{
 searchbgg(query = 'shipshape')
