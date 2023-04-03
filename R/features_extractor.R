@@ -17,7 +17,8 @@
 #' my_features <- c('name', 'status::own', 'status::wanttoplay', 'status::wanttobuy')
 #' features_extractor(my_elements, my_features)
 features_extractor <- function(elements, features) {
-    properties <- dplyr::tibble()
+    properties <- vector(mode = 'list', length = length(elements))
+    return_as_data_frame <- TRUE
     for (i in 1:length(elements)) {
         properties_i <- list()
         for (j in 1:length(features)) {
@@ -52,9 +53,22 @@ features_extractor <- function(elements, features) {
         }
 
         # append
-        properties <- rbind(properties, dplyr::mutate_all(data.frame(properties_i), as.character))
+        properties[[i]] <- properties_i
+
+        # can still return as data frame?
+        if (any(purrr::map_dbl(properties_i, length) > 1)) {
+            return_as_data_frame <- FALSE
+        }
+    }
+
+    # return as
+    if (return_as_data_frame) {
+        properties <- purrr::map(properties, ~ data.frame(.x))
+        properties <- purrr::map(properties, ~ dplyr::mutate_all(.x, as.character))
+        properties <- dplyr::bind_rows(properties)
+        properties <- dplyr::as_tibble(properties)
     }
 
     # return
-    dplyr::as_tibble(properties)
+    properties
 }
