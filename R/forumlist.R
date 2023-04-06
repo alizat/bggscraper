@@ -3,7 +3,7 @@
 #' @description \code{forumlist()} retrieves the lists of forums available for
 #'   the specified item.
 #'
-#' @param id id of the item that you wish retrieve the forum lists for.
+#' @param forumlist_id id of the item that you wish retrieve forum lists for.
 #' @param type type of the specified item. Valid values are \code{"thing"} and
 #'   \code{"family"}.
 #'

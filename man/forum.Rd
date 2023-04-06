@@ -7,7 +7,7 @@
 forum(forum_id)
 }
 \arguments{
-\item{id}{id of the desired forum.}
+\item{forum_id}{id of the desired forum.}
 }
 \value{
 Data frame containing list of threads for the specified forum.

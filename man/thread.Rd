@@ -7,7 +7,7 @@
 thread(thread_id)
 }
 \arguments{
-\item{id}{id of the desired forum.}
+\item{thread_id}{id of the desired forum.}
 }
 \value{
 Data frame containing the details of the specified thread.

@@ -3,7 +3,7 @@
 #' @description \code{forum()} retrieves the list of threads for the specified
 #'   forum.
 #'
-#' @param id id of the desired forum.
+#' @param forum_id id of the desired forum.
 #'
 #' @return
 #' Data frame containing list of threads for the specified forum.

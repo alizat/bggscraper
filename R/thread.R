@@ -2,7 +2,7 @@
 #'
 #' @description \code{thread()} retrieves the details for the specified thread.
 #'
-#' @param id id of the desired forum.
+#' @param thread_id id of the desired forum.
 #'
 #' @return
 #' Data frame containing the details of the specified thread.

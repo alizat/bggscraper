@@ -7,7 +7,15 @@
 user(username, buddies = 0, guilds = 0, hot = 0, top = 0)
 }
 \arguments{
-\item{username}{result to include user's top items?}
+\item{username}{name of the user to retrieve their details}
+
+\item{buddies}{result to include user's buddies?}
+
+\item{guilds}{result to include user's guilds?}
+
+\item{hot}{result to include user's hot items?}
+
+\item{top}{result to include user's top items?}
 }
 \value{
 List containing the specified user's info.

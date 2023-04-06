@@ -4,10 +4,10 @@
 #'   \href{http://boardgamegeek.com}{Board Game Geek}.
 #'
 #' @param username name of the user to retrieve their details
-#' @param username result to include user's buddies?
-#' @param username result to include user's guilds?
-#' @param username result to include user's hot items?
-#' @param username result to include user's top items?
+#' @param buddies result to include user's buddies?
+#' @param guilds result to include user's guilds?
+#' @param hot result to include user's hot items?
+#' @param top result to include user's top items?
 #'
 #' @return
 #' List containing the specified user's info.
