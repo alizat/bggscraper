@@ -35,7 +35,7 @@ thread <- function(thread_id) {
     articles_info$thread_id <- thread_id
     articles_info$thread_subject <- thread_subject
     articles_info <- dplyr::select(articles_info, thread_id, thread_subject, dplyr::everything())
-    articles_info <- dplyr::mutate(articles_info, body = stringr::str_remove(body, paste0('^', subject)))
+    articles_info$body <- stringr::str_remove(articles_info$body, paste0('^', articles_info$subject))
 
     # return
     articles_info
