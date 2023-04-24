@@ -63,15 +63,26 @@ thing <- function(ids) {
         # convert to data frame
         df_i <- purrr::map2_dfr(names(items_details_i), items_details_i, ~ tibble::tibble(feature = .x, value = .y))
         df_i[['id']]   <- rvest::html_attr(items[[i]], 'id')
-        df_i[['type']] <- rvest::html_attr(items[[i]], 'type')
-        df_i <- dplyr::select(df_i, dplyr::all_of(c('id', 'type', 'feature', 'value')))
+        df_i <- dplyr::select(df_i, dplyr::all_of(c('id', 'feature', 'value')))
+        df_i <- rbind(df_i, tibble(id = df_i[['id']], feature = 'type', value = 'boardgame'))
 
         # save features
         items_details_dfs[[i]] <- df_i
     }
 
     # return
-        dplyr::bind_rows(items_details_dfs)
+    return_me <-
+        dplyr::bind_rows(items_details_dfs) %>%
+        distinct() %>%
+        pivot_wider(names_from = feature, values_from = value, values_fn = list)
+    modify_these_columns <-
+        return_me %>%
+        colnames() %>%
+        setdiff(c('category', 'mechanic', 'family', 'designer', 'artist', 'publisher'))
+    return_me <-
+        return_me %>%
+        mutate(across(modify_these_columns, unlist))
+    return_me
 }
 
 # References
