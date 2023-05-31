@@ -64,24 +64,20 @@ thing <- function(ids) {
         df_i <- purrr::map2_dfr(names(items_details_i), items_details_i, ~ tibble::tibble(feature = .x, value = .y))
         df_i[['id']]   <- rvest::html_attr(items[[i]], 'id')
         df_i <- dplyr::select(df_i, dplyr::all_of(c('id', 'feature', 'value')))
-        df_i <- rbind(df_i, tibble(id = df_i[['id']], feature = 'type', value = 'boardgame'))
+        df_i <- rbind(df_i, dplyr::tibble(id = df_i[['id']], feature = 'type', value = 'boardgame'))
 
         # save features
         items_details_dfs[[i]] <- df_i
     }
 
     # return
-    return_me <-
-        dplyr::bind_rows(items_details_dfs) %>%
-        distinct() %>%
-        pivot_wider(names_from = feature, values_from = value, values_fn = list)
+    return_me <- dplyr::bind_rows(items_details_dfs)
+    return_me <- dplyr::distinct(return_me)
+    return_me <- tidyr::pivot_wider(return_me, names_from = feature, values_from = value, values_fn = list)
     modify_these_columns <-
-        return_me %>%
-        colnames() %>%
-        setdiff(c('category', 'mechanic', 'family', 'designer', 'artist', 'publisher'))
-    return_me <-
-        return_me %>%
-        mutate(across(modify_these_columns, unlist))
+        setdiff(colnames(return_me),
+                c('category', 'mechanic', 'family', 'designer', 'artist', 'publisher'))
+    return_me <- dplyr::mutate(return_me, dplyr::across(dplyr::all_of(modify_these_columns), unlist))
     return_me
 }
 
