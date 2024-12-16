@@ -55,9 +55,16 @@ empty_to_na <- function(x) {
 #' @examples
 #' my_html <- read_html('https://boardgamegeek.com/xmlapi2/collection?username=alizat')
 #' my_elements <- html_elements(my_html, 'item')
-#' my_features <- c('name', 'status::own', 'status::wanttoplay', 'status::wanttobuy')
+#' my_features <- c(name = 'name', own = 'status::own', wanttoplay = 'status::wanttoplay', wanttobuy = 'status::wanttobuy')
 #' features_extractor(my_elements, my_features)
 features_extractor <- function(elements, features) {
+    # if features is not a named list...
+    if (is.null(names(features))) {
+        # turn it into a named list
+        names(features) = features %>% str_remove_all('\\s') %>% str_replace_all('\\W+', '_') %>% str_remove('_value$')
+    }
+    
+    # extract features
     for (j in 1:length(features)) {
         # is it an attribute?
         is_attribute <- str_detect(features[[j]], '::')
@@ -294,6 +301,39 @@ mechanics <- function() {
 
 
 
+#' Last Page Index
+#'
+#' @description \code{last_page_index()} gets the index of the last page on a
+#'   given BGG link
+#'
+#' @param link BGG link for which to get the index of the last page
+#'
+#' @return
+#' Last page index for the given BGG link.
+#'
+#' @examples
+#' link <- 'https://boardgamegeek.com/browse/boardgamedesigner'
+#' indx <- last_page_index(link)
+#' indx
+last_page_index <- function(link) {
+    # paginator
+    paginator <- read_html(link)
+    paginator <- html_elements(paginator, '.fr a')
+    
+    # html element corresponding to last page
+    last_page_element <- paginator[html_attr(paginator, 'title') == 'last page']
+    
+    # index of last page
+    last_page <- html_text(last_page_element)
+    last_page <- str_extract(last_page, '[:digit:]+')
+    last_page <- as.numeric(last_page)
+    
+    # return
+    last_page
+}
+
+
+
 #' Designers of Board Games
 #'
 #' @description \code{designers()} retrieves the board game designers that are
@@ -367,39 +407,6 @@ designers <- function(wait = 10, verbose = FALSE) {
 
 # TODO: add note that the above code fails to retrieve pages beyond page 20
 #     `read_html(page_i)` returns empty page when i > 20
-
-
-
-#' Last Page Index
-#'
-#' @description \code{last_page_index()} gets the index of the last page on a
-#'   given BGG link
-#'
-#' @param link BGG link for which to get the index of the last page
-#'
-#' @return
-#' Last page index for the given BGG link.
-#'
-#' @examples
-#' link <- 'https://boardgamegeek.com/browse/boardgamedesigner'
-#' indx <- last_page_index(link)
-#' indx
-last_page_index <- function(link) {
-    # paginator
-    paginator <- read_html(link)
-    paginator <- html_elements(paginator, '.fr a')
-
-    # html element corresponding to last page
-    last_page_element <- paginator[html_attr(paginator, 'title') == 'last page']
-
-    # index of last page
-    last_page <- html_text(last_page_element)
-    last_page <- str_extract(last_page, '[:digit:]+')
-    last_page <- as.numeric(last_page)
-
-    # return
-    last_page
-}
 
 
 
@@ -479,6 +486,49 @@ families <- function(wait = 10, verbose = FALSE) {
 
 
 
+#' List of Forums for a Specified Item
+#'
+#' @description \code{forumlist()} retrieves the lists of forums available for
+#'   the specified item.
+#'
+#' @param forumlist_id id of the item that you wish retrieve forum lists for.
+#' @param type type of the specified item. Valid values are \code{"thing"} and
+#'   \code{"family"}.
+#'
+#' @return
+#' Data frame containing list of available forums for the specified item.
+#'
+#' @examples
+#' forumlist_pandemic_on_the_brink <- forumlist(40849)
+#' forumlist_pandemic_on_the_brink
+forumlist <- function(forumlist_id, type = 'thing') {
+    # forums
+    link <- paste0('https://www.boardgamegeek.com/xmlapi2/forumlist?id=', forumlist_id, '&type=', type)
+    forums <- rvest::html_elements(rvest::read_html(link), 'forum')
+    
+    # parse
+    features_to_extract <-
+        list(
+            forum_id     = '::id',
+            groupid      = '::groupid',
+            title        = '::title',
+            noposting    = '::noposting',
+            description  = '::description',
+            numthreads   = '::numthreads',
+            numposts     = '::numposts',
+            lastpostdate = '::lastpostdate'
+        )
+    forums_info <- features_extractor(forums, features_to_extract)
+    forums_info$forumlist_id <- forumlist_id
+    forums_info$type <- type
+    forums_info <- dplyr::select(forums_info, forumlist_id, type, dplyr::everything())
+    
+    # return
+    forums_info
+}
+
+
+
 #' List of Threads in a Forum
 #'
 #' @description \code{forum()} retrieves the list of threads for the specified
@@ -516,45 +566,45 @@ forum <- function(forum_id) {
 
 
 
-#' List of Forums for a Specified Item
+#' Thread Details
 #'
-#' @description \code{forumlist()} retrieves the lists of forums available for
-#'   the specified item.
+#' @description \code{thread()} retrieves the details for the specified thread.
 #'
-#' @param forumlist_id id of the item that you wish retrieve forum lists for.
-#' @param type type of the specified item. Valid values are \code{"thing"} and
-#'   \code{"family"}.
+#' @param thread_id id of the desired forum.
 #'
 #' @return
-#' Data frame containing list of available forums for the specified item.
+#' Data frame containing the details of the specified thread.
 #'
 #' @examples
-#' forumlist_pandemic_on_the_brink <- forumlist(40849)
-#' forumlist_pandemic_on_the_brink
-forumlist <- function(forumlist_id, type = 'thing') {
-    # forums
-    link <- paste0('https://www.boardgamegeek.com/xmlapi2/forumlist?id=', forumlist_id, '&type=', type)
-    forums <- rvest::html_elements(rvest::read_html(link), 'forum')
-
+#' pandemic_on_the_brink_review <- thread(650169)
+#' pandemic_on_the_brink_review
+thread <- function(thread_id) {
+    # forum threads
+    link <- paste0('https://www.boardgamegeek.com/xmlapi2/thread?id=', thread_id)
+    thread_details <- rvest::read_html(link)
+    thread_subject <- rvest::html_text(rvest::html_elements(thread_details, 'thread > subject'))
+    articles <- rvest::html_elements(thread_details, 'article')
+    
     # parse
     features_to_extract <-
         list(
-            forum_id     = '::id',
-            groupid      = '::groupid',
-            title        = '::title',
-            noposting    = '::noposting',
-            description  = '::description',
-            numthreads   = '::numthreads',
-            numposts     = '::numposts',
-            lastpostdate = '::lastpostdate'
+            article_id = '::id',
+            username   = '::username',
+            link       = '::link',
+            postdate   = '::postdate',
+            editdate   = '::editdate',
+            numedits   = '::numedits',
+            subject    = 'subject',
+            body       = 'body'
         )
-    forums_info <- features_extractor(forums, features_to_extract)
-    forums_info$forumlist_id <- forumlist_id
-    forums_info$type <- type
-    forums_info <- dplyr::select(forums_info, forumlist_id, type, dplyr::everything())
-
+    articles_info <- features_extractor(articles, features_to_extract)
+    articles_info$thread_id <- thread_id
+    articles_info$thread_subject <- thread_subject
+    articles_info <- dplyr::select(articles_info, thread_id, thread_subject, dplyr::everything())
+    articles_info$body <- stringr::str_remove(articles_info$body, paste0('^', articles_info$subject))
+    
     # return
-    forums_info
+    articles_info
 }
 
 
@@ -843,49 +893,6 @@ searchbgg <- function(query,
 
     # return
     query_result
-}
-
-
-
-#' Thread Details
-#'
-#' @description \code{thread()} retrieves the details for the specified thread.
-#'
-#' @param thread_id id of the desired forum.
-#'
-#' @return
-#' Data frame containing the details of the specified thread.
-#'
-#' @examples
-#' pandemic_on_the_brink_review <- thread(650169)
-#' pandemic_on_the_brink_review
-thread <- function(thread_id) {
-    # forum threads
-    link <- paste0('https://www.boardgamegeek.com/xmlapi2/thread?id=', thread_id)
-    thread_details <- rvest::read_html(link)
-    thread_subject <- rvest::html_text(rvest::html_elements(thread_details, 'thread > subject'))
-    articles <- rvest::html_elements(thread_details, 'article')
-
-    # parse
-    features_to_extract <-
-        list(
-            article_id = '::id',
-            username   = '::username',
-            link       = '::link',
-            postdate   = '::postdate',
-            editdate   = '::editdate',
-            numedits   = '::numedits',
-            subject    = 'subject',
-            body       = 'body'
-        )
-    articles_info <- features_extractor(articles, features_to_extract)
-    articles_info$thread_id <- thread_id
-    articles_info$thread_subject <- thread_subject
-    articles_info <- dplyr::select(articles_info, thread_id, thread_subject, dplyr::everything())
-    articles_info$body <- stringr::str_remove(articles_info$body, paste0('^', articles_info$subject))
-
-    # return
-    articles_info
 }
 
 
