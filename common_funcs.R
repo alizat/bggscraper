@@ -11,7 +11,7 @@ suppressMessages({
     library(tictoc)
     library(glue)
     library(rvest)
-
+    
     options(dplyr.summarise.inform = FALSE)
 })
 
@@ -109,7 +109,7 @@ features_extractor <- function(elements, features) {
             # for each item, return the single element within (or '' if nothing inside)
             map_chr(x, ~ if (length(.x) == 0) { '' } else { .x[[1]] })
         })
-
+    
     # return
     properties
 }
@@ -133,11 +133,11 @@ features_extractor <- function(elements, features) {
 thing <- function(ids) {
     # merge ids
     ids <- paste(ids, collapse = ',')
-
+    
     # game details
     link <- paste0('https://www.boardgamegeek.com/xmlapi2/thing?id=', ids, '&stats=1')
     items <- html_elements(read_html(link), 'item')
-
+    
     # features to extract
     features_to_extract <-
         c(
@@ -168,7 +168,7 @@ thing <- function(ids) {
             num_weights = 'ratings > numweights::value',
             avg_weight = 'ratings > averageweight::value'
         )
-
+    
     # extract features
     items_details <- features_extractor(items, features_to_extract)
     items_details
@@ -193,13 +193,13 @@ thing <- function(ids) {
 collection <- function(username) {
     # user collection link
     link <- paste0('https://boardgamegeek.com/xmlapi2/collection?username=', username, '&stats=1')
-
+    
     # obtain html page
     html_page <- read_html(link)
-
+    
     # elements to parse features
     items <- html_elements(html_page, 'item')
-
+    
     # features to extract
     features <-
         list(
@@ -232,11 +232,10 @@ collection <- function(username) {
             num_plays = 'numplays',
             comment = 'comment'
         )
-    # TODO: game "weight" to be included in above features?
-
+    
     # convert to data frame
     collectionitems <- features_extractor(items, features)
-
+    
     # return
     collectionitems
 }
@@ -257,15 +256,15 @@ collection <- function(username) {
 categories <- function() {
     # categories link
     link <- 'https://boardgamegeek.com/browse/boardgamecategory'
-
+    
     # obtain html page
     page <- read_html(link)
-
+    
     # retrieve categories
     categories     <- html_text(html_elements(page, '.forum_table tr > td > a'))
     categories_ids <- html_attr(html_elements(page, '.forum_table tr > td > a'), 'href')
     categories_ids <- str_extract(categories_ids, '[:digit:]+')
-
+    
     # return
     tibble(category_id = categories_ids, category_name = categories)
 }
@@ -286,15 +285,15 @@ categories <- function() {
 mechanics <- function() {
     # mechanics link
     link <- 'https://boardgamegeek.com/browse/boardgamemechanic'
-
+    
     # obtain html page
     page <- read_html(link)
-
+    
     # retrieve mechanics
     mechanics     <- html_text(html_elements(page, '.forum_table tr > td > a'))
     mechanics_ids <- html_attr(html_elements(page, '.forum_table tr > td > a'), 'href')
     mechanics_ids <- str_extract(mechanics_ids, '[:digit:]+')
-
+    
     # return
     tibble(mechanic_id = mechanics_ids, mechanic_name = mechanics)
 }
@@ -352,35 +351,35 @@ last_page_index <- function(link) {
 designers <- function(wait = 10, verbose = FALSE) {
     # designers link
     link <- 'https://boardgamegeek.com/browse/boardgamedesigner'
-
+    
     # get last page index
     last_page <- last_page_index(link)
     if (verbose)
         message(paste0('Number of HTML pages to scrape: ', last_page))
-
+    
     # loop on pages
     designers <- tibble()
     for (i in 1:last_page) {
         # log
         if (verbose)
             message(paste0('Currently scraping HTML page no. ', i))
-
+        
         # retrieve page i
         page_i <- glue('{link}/page/{i}')
         page_i <- read_html(page_i)
-
+        
         # designers of page i
         designers_i <- html_elements(page_i, 'table > tr > td > a')
-
+        
         # precaution: break in case of empty page
         if (length(designers_i) == 0) {
             # log
             if (verbose)
                 message(paste0('HTML page no. ', i, ' is empty! No data found.'))
-
+            
             break
         }
-
+        
         # parse
         designers_i <-
             map_dfr(
@@ -393,14 +392,16 @@ designers <- function(wait = 10, verbose = FALSE) {
                 }
             )
         designers_i <- distinct(designers_i)
-
+        
         # append
         designers <- rbind(designers, designers_i)
-
+        
         # duration to sleep so BGG website would not block us
-        Sys.sleep(wait)
+        if (i != last_page) {
+            Sys.sleep(wait)
+        }
     }
-
+    
     # return
     designers
 }
@@ -428,61 +429,63 @@ designers <- function(wait = 10, verbose = FALSE) {
 families <- function(wait = 10, verbose = FALSE) {
     # families link
     link <- 'https://boardgamegeek.com/browse/boardgamefamily'
-
+    
     # get last page index
     last_page <- last_page_index(link)
     if (verbose)
         message(paste0('Number of HTML pages to scrape: ', last_page))
-
+    
     # loop on pages
-    families <- dplyr::tibble()
+    families <- tibble()
     for (i in 1:last_page) {
         # log
         if (verbose)
             message(paste0('Currently scraping HTML page no. ', i))
-
+        
         # retrieve page i
-        page_i <- glue::glue('{link}/page/{i}')
-        page_i <- rvest::read_html(page_i)
-
+        page_i <- glue('{link}/page/{i}')
+        page_i <- read_html(page_i)
+        
         # families of page i
-        families_i <- rvest::html_elements(page_i, 'table > tr > td > a')
-
+        families_i <- html_elements(page_i, 'table > tr > td > a')
+        
         # precaution: break in case of empty page
         if (length(families_i) == 0) {
             # log
             if (verbose)
                 message(paste0('HTML page no. ', i, ' is empty! No data found.'))
-
+            
             break
         }
-
+        
         # parse
         families_i <-
-            purrr::map_dfr(
+            map_dfr(
                 families_i,
                 function(item) {
-                    family_id   <- empty_to_na(rvest::html_attr(families_i, 'href'))
-                    family_id   <- stringr::str_extract(family_id, '[:digit:]+')
-                    family_name <- empty_to_na(rvest::html_text(families_i))
-                    dplyr::tibble(family_id, family_name)
+                    family_id   <- empty_to_na(html_attr(families_i, 'href'))
+                    family_id   <- str_extract(family_id, '[:digit:]+')
+                    family_name <- empty_to_na(html_text(families_i))
+                    tibble(family_id, family_name)
                 }
             )
-        families_i <- dplyr::distinct(families_i)
-
+        families_i <- distinct(families_i)
+        
         # append
         families <- rbind(families, families_i)
-
+        
         # duration to sleep so BGG website would not block us
-        Sys.sleep(wait)
+        if (i != last_page) {
+            Sys.sleep(wait)
+        }
     }
-
+    
     # return
     families
 }
 
 # TODO: add note that the above code fails to retrieve pages beyond page 20
-#     `rvest::read_html(page_i)` returns empty page when i > 20
+#     `read_html(page_i)` returns empty page when i > 20
 
 
 
@@ -504,7 +507,7 @@ families <- function(wait = 10, verbose = FALSE) {
 forumlist <- function(forumlist_id, type = 'thing') {
     # forums
     link <- paste0('https://www.boardgamegeek.com/xmlapi2/forumlist?id=', forumlist_id, '&type=', type)
-    forums <- rvest::html_elements(rvest::read_html(link), 'forum')
+    forums <- html_elements(read_html(link), 'forum')
     
     # parse
     features_to_extract <-
@@ -521,7 +524,7 @@ forumlist <- function(forumlist_id, type = 'thing') {
     forums_info <- features_extractor(forums, features_to_extract)
     forums_info$forumlist_id <- forumlist_id
     forums_info$type <- type
-    forums_info <- dplyr::select(forums_info, forumlist_id, type, dplyr::everything())
+    forums_info <- select(forums_info, forumlist_id, type, everything())
     
     # return
     forums_info
@@ -544,8 +547,8 @@ forumlist <- function(forumlist_id, type = 'thing') {
 forum <- function(forum_id) {
     # forum threads
     link <- paste0('https://www.boardgamegeek.com/xmlapi2/forum?id=', forum_id)
-    threads <- rvest::html_elements(rvest::read_html(link), 'thread')
-
+    threads <- html_elements(read_html(link), 'thread')
+    
     # parse
     features_to_extract <-
         list(
@@ -558,8 +561,8 @@ forum <- function(forum_id) {
         )
     threads_info <- features_extractor(threads, features_to_extract)
     threads_info$forum_id <- forum_id
-    threads_info <- dplyr::select(threads_info, forum_id, dplyr::everything())
-
+    threads_info <- select(threads_info, forum_id, everything())
+    
     # return
     threads_info
 }
@@ -580,10 +583,10 @@ forum <- function(forum_id) {
 #' pandemic_on_the_brink_review
 thread <- function(thread_id) {
     # forum threads
-    link <- paste0('https://www.boardgamegeek.com/xmlapi2/thread?id=', thread_id)
-    thread_details <- rvest::read_html(link)
-    thread_subject <- rvest::html_text(rvest::html_elements(thread_details, 'thread > subject'))
-    articles <- rvest::html_elements(thread_details, 'article')
+    link           <- paste0('https://www.boardgamegeek.com/xmlapi2/thread?id=', thread_id)
+    thread_details <- read_html(link)
+    thread_subject <- html_text(html_elements(thread_details, 'thread > subject'))
+    articles       <- html_elements(thread_details, 'article')
     
     # parse
     features_to_extract <-
@@ -600,8 +603,8 @@ thread <- function(thread_id) {
     articles_info <- features_extractor(articles, features_to_extract)
     articles_info$thread_id <- thread_id
     articles_info$thread_subject <- thread_subject
-    articles_info <- dplyr::select(articles_info, thread_id, thread_subject, dplyr::everything())
-    articles_info$body <- stringr::str_remove(articles_info$body, paste0('^', articles_info$subject))
+    articles_info <- select(articles_info, thread_id, thread_subject, everything())
+    articles_info$body <- str_remove(articles_info$body, paste0('^', articles_info$subject))
     
     # return
     articles_info
@@ -627,13 +630,13 @@ thread <- function(thread_id) {
 #' guild(1299)
 guild <- function(guild_id, members = 1, sort_by = 'username') {
     # link
-    link <- glue::glue('https://boardgamegeek.com/xmlapi2/guild?id={guild_id}&members={members}&sort={sort_by}')
-
+    link <- glue('https://boardgamegeek.com/xmlapi2/guild?id={guild_id}&members={members}&sort={sort_by}')
+    
     # html page
-    page <- rvest::read_html(link)
-
+    page <- read_html(link)
+    
     # guild info
-    guild_details <- rvest::html_elements(page, 'guild')
+    guild_details <- html_elements(page, 'guild')
     features <-
         list(
             guild_id = '::id',
@@ -651,24 +654,24 @@ guild <- function(guild_id, members = 1, sort_by = 'username') {
             country = 'location::country'
         )
     guild_details <- features_extractor(guild_details, features)
-
+    
     # members info
-    num_members <- as.numeric(rvest::html_attr(rvest::html_elements(page, 'members'), 'count'))
-    num_pages <- ceiling(num_members / 25)
-    members_info <- dplyr::tibble()
+    num_members  <- as.numeric(html_attr(html_elements(page, 'members'), 'count'))
+    num_pages    <- ceiling(num_members / 25)
+    members_info <- tibble()
     for (page_no in 1:num_pages) {
         # page link
         page_link <- paste0(link, '&page=', page_no)
-
+        
         # page itself
-        page <- rvest::read_html(page_link)
-
+        page <- read_html(page_link)
+        
         # members
-        members_list <- rvest::html_elements(page, 'member')
+        members_list <- html_elements(page, 'member')
         members_list <- features_extractor(elements = members_list, features = list(member_name = '::name', member_join_date = '::date'))
         members_info <- rbind(members_info, members_list)
     }
-
+    
     # return
     list(
         guild_details = guild_details,
@@ -694,24 +697,24 @@ guild <- function(guild_id, members = 1, sort_by = 'username') {
 #' hot_items_df
 hot <- function(type = 'boardgame') {
     # link
-    link <- glue::glue('https://boardgamegeek.com/xmlapi2/hot?type={type}')
-
+    link <- glue('https://boardgamegeek.com/xmlapi2/hot?type={type}')
+    
     # html page
-    page <- rvest::read_html(link)
-
+    page <- read_html(link)
+    
     # hot items
-    items <- rvest::html_elements(page, 'item')
+    items <- html_elements(page, 'item')
     items <-
-        purrr::map_dfr(
+        map_dfr(
             items,
             function(item) {
-                item_id        <- empty_to_na(rvest::html_attr(item, 'id'))
-                item_name      <- empty_to_na(rvest::html_attr(rvest::html_elements(item, 'name'), 'value'))
-                year_published <- empty_to_na(rvest::html_attr(rvest::html_elements(item, 'yearpublished'), 'value'))
-                dplyr::tibble(item_id, item_name, year_published)
+                item_id        <- empty_to_na(html_attr(item, 'id'))
+                item_name      <- empty_to_na(html_attr(html_elements(item, 'name'), 'value'))
+                year_published <- empty_to_na(html_attr(html_elements(item, 'yearpublished'), 'value'))
+                tibble(item_id, item_name, year_published)
             }
         )
-
+    
     # return
     items
 }
@@ -755,11 +758,11 @@ plays <- function(item_id = NULL,
                   wait = 10) {
     # check that item id and/or user name was supplied
     assertthat::assert_that(!is.null(item_id) | !is.null(username))
-
+    
     # xml link
-    item_id  <- if (is.null(item_id))  '' else item_id
-    username <- if (is.null(username)) '' else username
-    link_base <- glue::glue('https://boardgamegeek.com/xmlapi2/plays?id={item_id}&username={username}')
+    item_id   <- if (is.null(item_id))  '' else item_id
+    username  <- if (is.null(username)) '' else username
+    link_base <- glue('https://boardgamegeek.com/xmlapi2/plays?id={item_id}&username={username}')
     if (!is.null(type))
         link_base <- paste0(link_base, '&type=', type)
     if (!is.null(mindate))
@@ -768,52 +771,54 @@ plays <- function(item_id = NULL,
         link_base <- paste0(link_base, '&maxdate=', lubridate::as_date(maxdate))
     if (!is.null(subtype))
         link_base <- paste0(link_base, '&subtype=', subtype)
-
+    
     # number of pages
-    page <- rvest::read_html(link_base)
-    num_plays <- rvest::html_attr(rvest::html_elements(page, 'plays'), 'total')
+    page      <- read_html(link_base)
+    num_plays <- html_attr(html_elements(page, 'plays'), 'total')
     num_plays <- as.numeric(num_plays)
     num_pages <- ceiling(num_plays / 100)
-
+    
     # plays
     plays <- list()
     for (i in 1:num_pages) {
         # retrieve page i
-        page_i <- glue::glue('{link_base}&page={i}')
-        page_i <- rvest::html_elements(rvest::read_html(page_i), 'plays')
-
+        page_i <- glue('{link_base}&page={i}')
+        page_i <- html_elements(read_html(page_i), 'plays')
+        
         # get plays of page i
-        plays_i <- rvest::html_elements(page_i, 'play')
-        items_i <- rvest::html_elements(page_i, 'play item')
-
+        plays_i <- html_elements(page_i, 'play')
+        items_i <- html_elements(page_i, 'play item')
+        
         # precaution: break in case of empty page
         if (length(plays_i) == 0)
             break
-
+        
         # parse
         plays_i <-
-            dplyr::tibble(
-                play_id    = rvest::html_attr(plays_i, 'id'),
-                user_id    = if (username == '') rvest::html_attr(plays_i, 'userid') else rvest::html_attr(page_i, 'userid'),
-                item_id    = rvest::html_attr(items_i, 'objectid'),
-                item_name  = rvest::html_attr(items_i, 'name'),
-                date       = rvest::html_attr(plays_i, 'date'),
-                quantity   = rvest::html_attr(plays_i, 'quantity'),
-                length     = rvest::html_attr(plays_i, 'length'),
-                incomplete = rvest::html_attr(plays_i, 'incomplete'),
-                nowinstats = rvest::html_attr(plays_i, 'nowinstats'),
-                location   = rvest::html_attr(plays_i, 'location')
+            tibble(
+                play_id    = html_attr(plays_i, 'id'),
+                user_id    = if (username == '') html_attr(plays_i, 'userid') else html_attr(page_i, 'userid'),
+                item_id    = html_attr(items_i, 'objectid'),
+                item_name  = html_attr(items_i, 'name'),
+                date       = html_attr(plays_i, 'date'),
+                quantity   = html_attr(plays_i, 'quantity'),
+                length     = html_attr(plays_i, 'length'),
+                incomplete = html_attr(plays_i, 'incomplete'),
+                nowinstats = html_attr(plays_i, 'nowinstats'),
+                location   = html_attr(plays_i, 'location')
             )
-
+        
         # append
         plays[[i]] <- plays_i
-
+        
         # duration to sleep so BGG website would not block us
-        Sys.sleep(wait)
+        if (i != num_pages) {
+            Sys.sleep(wait)
+        }
     }
-
+    
     # return
-    dplyr::bind_rows(plays)
+    bind_rows(plays)
 }
 
 
@@ -842,55 +847,55 @@ searchbgg <- function(query,
                       type = NULL,
                       exact = 0) {
     # adjust query (if necessary)
-    query <- stringr::str_squish(query)
-    query <- stringr::str_replace_all(query, ' ', '+')
-
+    query <- str_squish(query)
+    query <- str_replace_all(query, ' ', '+')
+    
     # features of interest
     my_features <-
         list(
-            item_id = '::id',
-            item_type = 'name::type',
-            item_name = 'name::value',
+            item_id            = '::id',
+            item_type          = 'name::type',
+            item_name          = 'name::value',
             item_yearpublished = 'yearpublished::value'
         )
-
+    
     # if type is NULL, it will be taken to mean BOTH board games and expansions
     if (is.null(type) || type == 'boardgame') {
         # both board games and expansions
-        link <- glue::glue('https://boardgamegeek.com/xmlapi2/search?query={query}&type=boardgame')
-        page <- rvest::read_html(link)
-        all_items <- rvest::html_elements(page, 'item')
+        link         <- glue('https://boardgamegeek.com/xmlapi2/search?query={query}&type=boardgame')
+        page         <- read_html(link)
+        all_items    <- html_elements(page, 'item')
         query_result <- features_extractor(all_items, my_features)
-
+        
         # just expansions
-        link <- glue::glue('https://boardgamegeek.com/xmlapi2/search?query={query}&type=boardgameexpansion')
-        page <- rvest::read_html(link)
-        expansions     <- rvest::html_elements(page, 'item')
-        expansions_ids <- rvest::html_attr(expansions, 'id')
-
+        link           <- glue('https://boardgamegeek.com/xmlapi2/search?query={query}&type=boardgameexpansion')
+        page           <- read_html(link)
+        expansions     <- html_elements(page, 'item')
+        expansions_ids <- html_attr(expansions, 'id')
+        
         # if 'type' was specified as 'boardgame'...
         if (!is.null(type) && type == 'boardgame') {
             # ... exclude expansions
-            query_result <- dplyr::filter(query_result, !('item_id' %in% expansions_ids))
+            query_result <- filter(query_result, !('item_id' %in% expansions_ids))
         } else {
             # otherwise, keep all items and adjust type in 'all_items_types'
             query_result$item_type[query_result$item_id %in% expansions_ids] <- 'boardgameexpansion'
         }
-
+        
     } else {
         # type was specified as something other than 'boardgame'
-        link <- glue::glue('https://boardgamegeek.com/xmlapi2/search?query={query}&type={type}')
-        page <- rvest::read_html(link)
-        all_items       <- rvest::html_elements(page, 'item')
+        link         <- glue('https://boardgamegeek.com/xmlapi2/search?query={query}&type={type}')
+        page         <- read_html(link)
+        all_items    <- html_elements(page, 'item')
         query_result <- features_extractor(all_items, my_features)
     }
-
+    
     # adjust item type in query results
     if (is.null(type)) {
         type <- 'boardgame'
     }
     query_result$item_type[query_result$item_type == 'primary'] <- type
-
+    
     # return
     query_result
 }
@@ -914,59 +919,59 @@ searchbgg <- function(query,
 top_k_games_ids <- function(k = 100, wait = 10) {
     # initialize
     games_ids_all <- c()
-
+    
     # lower bound for k is 1
     if (k < 1) {
         message('Lower limit for K is 1')
         message('Setting K = 1 ...')
         k <- 1
     }
-
+    
     # upper bound for k is 5000
     if (k > 5000) {
         message('Upper limit for K is 5000')
         message('Setting K = 5000 ...')
         k <- 5000
     }
-
+    
     # loop on pages
     i <- 1
-    while(length(games_ids_all) < k) {
+    while (length(games_ids_all) < k) {
         # retrieve page i
-        page_i <- glue::glue('https://boardgamegeek.com/search/boardgame/page/{i}?advsearch=1&q=&sort=rank&sortdir=asc')
-        page_i <- rvest::read_html(page_i)
-        page_i <- rvest::html_elements(page_i, xpath = '//*[@id="collectionitems"]')
-
+        page_i <- glue('https://boardgamegeek.com/search/boardgame/page/{i}?advsearch=1&q=&sort=rank&sortdir=asc')
+        page_i <- read_html(page_i)
+        page_i <- html_elements(page_i, xpath = '//*[@id="collectionitems"]')
+        
         # grab game ids of page i
-        games_ids <- rvest::html_attr(rvest::html_elements(page_i, 'tr > td > div > a'), 'href')
-        games_ids <- stringr::str_extract(games_ids, '/[:digit:]+/')
-        games_ids <- stringr::str_replace_all(games_ids, '/', '')
-
+        games_ids <- html_attr(html_elements(page_i, 'tr > td > div > a'), 'href')
+        games_ids <- str_extract(games_ids, '/[:digit:]+/')
+        games_ids <- str_replace_all(games_ids, '/', '')
+        
         # precaution: break in case of empty page
         if (length(games_ids) == 0)
             break
-
+        
         # append
         games_ids_all <- c(games_ids_all, games_ids)
-
+        
         # increment i
         i <- i + 1
-
+        
         # duration to sleep so BGG website would not block us
         Sys.sleep(wait)
     }
-
+    
     # keep k game ids
     if (length(games_ids_all) > 0) {
         # precaution: length(games_ids_all) may be lower than k
         k <- min(k, length(games_ids_all))
-
+    
         # keep number of games requested
         games_ids_all <- games_ids_all[1:k]
     } else {
         message("That's odd... No games retrieved?")
     }
-
+    
     # return
     games_ids_all
 }
@@ -994,41 +999,41 @@ user <- function(username, buddies = 0, guilds = 0, hot = 0, top = 0) {
     # user collection link
     link <- paste0('https://boardgamegeek.com/xmlapi2/user?name=', username)
     link <- paste0(link, '&buddies=', buddies)
-    link <- paste0(link, '&guilds=', guilds)
-    link <- paste0(link, '&hot=', hot)
-    link <- paste0(link, '&top=', top)
-
+    link <- paste0(link, '&guilds=',  guilds)
+    link <- paste0(link, '&hot=',     hot)
+    link <- paste0(link, '&top=',     top)
+    
     # obtain html page
-    html_page <- rvest::read_html(link)
-
+    html_page <- read_html(link)
+    
     # elements to parse features
-    buddies <- if (buddies) rvest::html_elements(html_page, 'buddies') else NULL
-    guilds  <- if (guilds)  rvest::html_elements(html_page, 'guilds')  else NULL
-    hott     <- if (hot)     rvest::html_elements(html_page, 'hot')     else NULL
-    topp     <- if (top)     rvest::html_elements(html_page, 'top')     else NULL
-    hots <- if (!is.null(hott)) rvest::html_elements(hott, 'item')
-    tops <- if (!is.null(topp)) rvest::html_elements(topp, 'item')
-
+    buddies <- if ( buddies        ) html_elements(html_page, 'buddies') else NULL
+    guilds  <- if ( guilds         ) html_elements(html_page, 'guilds')  else NULL
+    hott    <- if ( hot            ) html_elements(html_page, 'hot')     else NULL
+    topp    <- if ( top            ) html_elements(html_page, 'top')     else NULL
+    hots    <- if ( !is.null(hott) ) html_elements(hott,      'item')    else NULL
+    tops    <- if ( !is.null(topp) ) html_elements(topp,      'item')    else NULL
+    
     # extract user details
     features <-
         list(
-            firstname = 'firstname::value',
-            lastname = 'lastname::value',
-            avatarlink = 'avatarlink::value',
-            yearregistered = 'yearregistered::value',
-            lastlogin = 'lastlogin::value',
-            stateorprovince = 'stateorprovince::value',
-            country = 'country::value',
-            webaddress = 'webaddress::value',
-            xboxaccount = 'xboxaccount::value',
-            wiiaccount = 'wiiaccount::value',
-            psnaccount = 'psnaccount::value',
+            firstname        = 'firstname::value',
+            lastname         = 'lastname::value',
+            avatarlink       = 'avatarlink::value',
+            yearregistered   = 'yearregistered::value',
+            lastlogin        = 'lastlogin::value',
+            stateorprovince  = 'stateorprovince::value',
+            country          = 'country::value',
+            webaddress       = 'webaddress::value',
+            xboxaccount      = 'xboxaccount::value',
+            wiiaccount       = 'wiiaccount::value',
+            psnaccount       = 'psnaccount::value',
             battlenetaccount = 'battlenetaccount::value',
-            steamaccount = 'steamaccount::value',
-            traderating = 'traderating::value'
+            steamaccount     = 'steamaccount::value',
+            traderating      = 'traderating::value'
         )
     user_details <- features_extractor(list(html_page), features)
-
+    
     # extract hots/tops features
     features <-
         list(
@@ -1041,7 +1046,7 @@ user <- function(username, buddies = 0, guilds = 0, hot = 0, top = 0) {
         hots_info <- features_extractor(hots, features)
     if (!is.null(tops) && length(tops) > 0)
         tops_info <- features_extractor(tops, features)
-
+    
     # combine into list
     user_info <- list()
     user_info[['user_details']] <- user_details
@@ -1049,7 +1054,7 @@ user <- function(username, buddies = 0, guilds = 0, hot = 0, top = 0) {
         user_info[['hots_info']] <- hots_info
     if (top != 0 && exists('tops_info'))
         user_info[['tops_info']] <- tops_info
-
+    
     # return
     user_info
 }
@@ -1073,37 +1078,40 @@ user <- function(username, buddies = 0, guilds = 0, hot = 0, top = 0) {
 year_games_ids <- function(y, wait = 10) {
     # initialize
     games_ids_all <- c()
-
+    
     # xml link
     link_base <- 'https://boardgamegeek.com/search/boardgame'
-
+    
     # params
-    params <- glue::glue('advsearch=1&q=&sort=rank&sortdir=asc&range[yearpublished][min]={y}&range[yearpublished][max]={y}&range[numvoters][min]=1')
-
+    params <- glue('advsearch=1&q=&sort=rank&sortdir=asc&range[yearpublished][min]={y}&range[yearpublished][max]={y}&range[numvoters][min]=1')
+    
     # get last page index
-    last_page <- last_page_index(glue::glue('{link_base}?{params}'))
-
+    last_page <- last_page_index(glue('{link_base}?{params}'))
+    
     # loop on pages
     for (i in 1:last_page) {
         # retrieve page i
-        page_i <- glue::glue('{link_base}/page/{i}?{params}')
-        page_i <- rvest::read_html(page_i)
-        page_i <- rvest::html_elements(page_i, xpath = '//*[@id="collectionitems"]')
-
+        page_i <- glue('{link_base}/page/{i}?{params}')
+        page_i <- read_html(page_i)
+        page_i <- html_elements(page_i, xpath = '//*[@id="collectionitems"]')
+        
         # grab game ids of page i
-        games_ids <- rvest::html_attr(rvest::html_elements(page_i, 'tr > td > div > a'), 'href')
+        games_ids <- html_attr(html_elements(page_i, 'tr > td > div > a'), 'href')
         if (length(games_ids) == 0)
             break
-        games_ids <- stringr::str_extract(games_ids, '/[:digit:]+/')
-        games_ids <- stringr::str_replace_all(games_ids, '/', '')
-
+        games_ids <- str_extract(games_ids, '/[:digit:]+/')
+        games_ids <- str_replace_all(games_ids, '/', '')
+        
         # append
         games_ids_all <- c(games_ids_all, games_ids)
-
+        print(glue('{length(games_ids_all)} game ids collected so far'))
+        
         # duration to sleep so BGG website would not block us
-        Sys.sleep(wait)
+        if (i != last_page) {
+            Sys.sleep(wait)
+        }
     }
-
+    
     # return
     games_ids_all
 }
