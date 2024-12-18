@@ -15,92 +15,79 @@ knitr::opts_chunk$set(
 
 
 
-# The `bggscraper` library
+# The `bggscraper` project
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-`bggscraper` is an R package that scrapes all sorts of (publicly
-accessible) data from the [Board Game Geek](boardgamegeek.com) website.
-It depends heavily on the [BGG XML
+`bggscraper` is a bundle of scripts that provide the functionality to scrape all
+sorts of (publicly accessible) data from the [Board Game
+Geek](boardgamegeek.com) website. It depends heavily on the [BGG XML
 API2](https://boardgamegeek.com/wiki/page/BGG_XML_API2) library.
 
-***Note that this is a work in progress. However, I intend to make it useful and usable soon (by end of March, 2023).***
+`bggscraper` was previously an R package, that could be installeda and used.
+However, I decided against making it a package because I found myself wasting
+quite a lot of time doing package development as opposed to writing the scraping
+code itself. Perhaps, when I am done writing all the code for scraping the BGG
+website, I will convert it back to an R package again; however, this remains to
+be seen.
+
+***Note: This is a work in progress!***
 
 Using this library, you may scrape the following info (among others):
 
 * list of [top 5000 board games](https://boardgamegeek.com/search/boardgame?advsearch=1&q=&sort=rank) as per the rankings on BGG.
 * details on board games and board game expansions (i.e., categories, mechanics, designers, etc.)
 * BGG users' games collections, including what they own as well as what they hope to play or buy in the future.
-* Info on users themselves.
-* list of games are hot nowadays.
-* Information on plays of a certain game for one or more users.
-* geeklists, forum lists, forums, threads, guilds pertaining to a certain board game id.
+* info on users themselves.
+* list of games that are hot nowadays.
+* information on plays of a certain game for one or more users.
+* geeklists, forum lists, forums, threads or guilds pertaining to a certain board game id.
 
 
-## Installation
-
-You can install the development version of bggscraper from [GitHub](https://github.com/) with:
-
-``` r
-# install.packages("devtools")
-devtools::install_github("alizat/bggscraper")
-```
 
 ## Examples
 
 This is an example that shows how to retrieve information on a particular user's (board game) collection:
 
 ```{r, echo=TRUE}
-library(bggscraper)
+source('common_funcs.R')
 
 # get a user's game collection
 user <- 'alizat'
-collection_items <- user_collection(user)
+collection_items <- collection(user)
+collection_items_owned <- collection_items %>% filter(owned == "1")
 
-# get details for each item in user's collection
-games_details <- list()
-for (i in 1:nrow(collection_items)) {
-    # get details for current item
-    games_details[[as.character(collection_items$object_id[[i]])]] <- thing(collection_items$object_id[[i]])
-    
-    # 5-second sleep so BGG website would not block us
-    Sys.sleep(5)
-}
+# display names of that user's games
+print(collection_items_owned$item_name)
 
-# print info for the first game
-print(games_details[[1]], n = 100)
+# get supplementary details of the first 10 games
+games_details <- thing(collection_items_owned$item_id[1:10])
+
+# observe details of the first games
+glimpse(games_details[1,])
 ```
 
 This is an example that shows to retrieve the current top 10 board games ids as per [BGG's rankings](a)
 
 ```{r, echo=TRUE}
-library(bggscraper)
+source('common_funcs.R')
 
 # top 10 ranked games on BGG
 top_K_games_ids <- top_k_games_ids(k = 10)
 
 # get details for each item in user's collection
-games_details <- list()
-for (id in top_K_games_ids) {
-    # get details for current game
-    games_details[[id]] <- thing(id)
-    current_games_details <- games_details[[id]]
-    
-    # print current game id and name
-    print(glue::glue("{id}: {current_games_details$value[current_games_details$feature == 'name']}"))
-    
-    # 5-second sleep so BGG website would not block us
-    Sys.sleep(5)
-}
+games_details <- thing(top_K_games_ids)
+games_details %>% 
+    select(name, year_published, designer, rating_avg) %>% 
+    mutate(designer = map_chr(designer, paste, collapse = ', ')) %>% 
+    print()
 ```
 
 <!-- You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/v1/examples>. -->
 
 <!-- You can also embed plots, for example: -->
-
 <!-- ```{r pressure, echo = FALSE} -->
 <!-- plot(pressure) -->
 <!-- ``` -->
-
 <!-- In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN. -->

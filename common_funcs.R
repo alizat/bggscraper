@@ -7,8 +7,6 @@
 suppressMessages({
     library(tidyverse)
     library(lubridate)
-    library(plotly)
-    library(tictoc)
     library(glue)
     library(rvest)
     
