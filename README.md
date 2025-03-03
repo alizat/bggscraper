@@ -54,7 +54,7 @@ print(collection_items_owned$item_name)
 #>   [2] "3 Wishes"                                          
 #>   [3] "Age of Galaxy"                                     
 #>   [4] "Agropolis"                                         
-#>   [5] "Air, Land & Sea"                                   
+#>   [5] "Air, Land, & Sea"                                  
 #>   [6] "Architects of the West Kingdom"                    
 #>   [7] "Attack on Titan: Deck-Building Game"               
 #>   [8] "Azul"                                              
@@ -223,15 +223,15 @@ glimpse(games_details[1,])
 #> $ designer           <list> <"James Ernest", "Mike Selinker">
 #> $ artist             <list> "Echo Chernik"
 #> $ publisher          <list> <"Calliope Games", "Cheapass Games", "Gamesmith, LL…
-#> $ rating_users_rated <chr> "1561"
-#> $ rating_avg         <chr> "6.52864"
-#> $ rating_bayes_avg   <chr> "5.92165"
-#> $ rank               <chr> "3468"
-#> $ owned              <chr> "3527"
-#> $ trading            <chr> "72"
-#> $ wanting            <chr> "36"
+#> $ rating_users_rated <chr> "1570"
+#> $ rating_avg         <chr> "6.53293"
+#> $ rating_bayes_avg   <chr> "5.92404"
+#> $ rank               <chr> "3462"
+#> $ owned              <chr> "3546"
+#> $ trading            <chr> "67"
+#> $ wanting            <chr> "35"
 #> $ wishing            <chr> "283"
-#> $ num_comments       <chr> "458"
+#> $ num_comments       <chr> "461"
 #> $ num_weights        <chr> "67"
 #> $ avg_weight         <chr> "1.209"
 ```
@@ -243,10 +243,10 @@ ids as per [BGG’s rankings](a)
 source('common_funcs.R')
 
 # top 10 ranked games on BGG
-top_K_games_ids <- top_k_games_ids(k = 10)
+top_10_games_ids <- top_k_games_ids(k = 10)
 
 # get details for each item in user's collection
-games_details <- thing(top_K_games_ids)
+games_details <- thing(top_10_games_ids)
 games_details %>% 
     select(name, year_published, designer, rating_avg) %>% 
     mutate(designer = map_chr(designer, paste, collapse = ', ')) %>% 
@@ -254,16 +254,16 @@ games_details %>%
 #> # A tibble: 10 × 4
 #>    name                              year_published designer          rating_avg
 #>    <chr>                             <chr>          <chr>             <chr>     
-#>  1 Brass: Birmingham                 2018           Gavan Brown, Mat… 8.58637   
-#>  2 Pandemic Legacy: Season 1         2015           Rob Daviau, Matt… 8.52337   
-#>  3 Ark Nova                          2021           Mathias Wigge     8.53371   
-#>  4 Gloomhaven                        2017           Isaac Childres    8.57667   
-#>  5 Twilight Imperium: Fourth Edition 2017           Dane Beltrami, C… 8.58874   
-#>  6 Dune: Imperium                    2020           Paul Dennen       8.42987   
-#>  7 Terraforming Mars                 2016           Jacob Fryxelius   8.3533    
-#>  8 War of the Ring: Second Edition   2011           Roberto Di Megli… 8.54874   
-#>  9 Star Wars: Rebellion              2016           Corey Konieczka   8.41853   
-#> 10 Gloomhaven: Jaws of the Lion      2020           Isaac Childres    8.41513
+#>  1 Brass: Birmingham                 2018           Gavan Brown, Mat… 8.58609   
+#>  2 Pandemic Legacy: Season 1         2015           Rob Daviau, Matt… 8.52207   
+#>  3 Ark Nova                          2021           Mathias Wigge     8.53358   
+#>  4 Gloomhaven                        2017           Isaac Childres    8.57485   
+#>  5 Twilight Imperium: Fourth Edition 2017           Dane Beltrami, C… 8.58812   
+#>  6 Dune: Imperium                    2020           Paul Dennen       8.42926   
+#>  7 Terraforming Mars                 2016           Jacob Fryxelius   8.35325   
+#>  8 War of the Ring: Second Edition   2011           Roberto Di Megli… 8.54887   
+#>  9 Star Wars: Rebellion              2016           Corey Konieczka   8.41874   
+#> 10 Spirit Island                     2017           R. Eric Reuss     8.34281
 ```
 
 <!-- You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/v1/examples>. -->

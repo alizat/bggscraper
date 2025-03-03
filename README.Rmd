@@ -74,10 +74,10 @@ This is an example that shows to retrieve the current top 10 board games ids as 
 source('common_funcs.R')
 
 # top 10 ranked games on BGG
-top_K_games_ids <- top_k_games_ids(k = 10)
+top_10_games_ids <- top_k_games_ids(k = 10)
 
 # get details for each item in user's collection
-games_details <- thing(top_K_games_ids)
+games_details <- thing(top_10_games_ids)
 games_details %>% 
     select(name, year_published, designer, rating_avg) %>% 
     mutate(designer = map_chr(designer, paste, collapse = ', ')) %>% 
