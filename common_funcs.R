@@ -15,6 +15,65 @@ suppressMessages({
 
 
 
+#' Keep calling the passed function until it succeeds.
+#'
+#' @description \code{retry_my_func()} keeps calling a function until it
+#'   succeeds. Use this function if the function you are trying to call is
+#'   fiddly and fails on occasion.
+#'
+#' @param my_func function to keep on calling till success
+#' @param ... parameters for the passed function if any
+#' @param time_between_tries time to wait before trying to call the function again
+#'
+#' @return
+#' output of the passed function
+#'
+#' @examples
+#' my_func <- function(threshold) {
+#'     generated_value <- round(runif(1), 3)
+#'     print(paste0('Generated value is: ', generated_value))
+#'     if (generated_value < threshold) {
+#'         print(paste0('Generated value (', generated_value, ') < threshold (', threshold, ')  <FAIL>'))
+#'         stop("Function failed!")
+#'     } else {
+#'         print(paste0('Generated value (', generated_value, ') > threshold (', threshold, ')  <SUCCESS>'))
+#'         return("Success!")
+#'     }
+#' }
+#' retry_my_func(my_func, 0.7)  # call a function with 70% chance of failure
+retry_my_func <- function(my_func, ..., time_between_tries = 2) {
+    repeat {
+        tryCatch({
+            result <- my_func(...)
+            return(result)  # Return the result if successful
+        }, error = function(e) {
+            message("Error occurred: ", e$message)
+            message("Retrying...")
+        })
+    }
+}
+
+
+
+#' Stubbornly get the html content of a web page.
+#'
+#' @description Sometimes, retrieval of a web page fails for whatever reason.
+#'   This will keep on calling the \code{stubborn_html_reader()} on it until it
+#'   finally gets back with the result.
+#'
+#' @param link web page to be read
+#'
+#' @return
+#' html content of the given link
+#'
+#' @examples
+#' stubborn_html_reader('https://www.imdb.com/')
+stubborn_html_reader <- function(link) {
+    retry_my_func(read_html, link)
+}
+
+
+
 #' Convert Array to NA if Empty
 #'
 #' @description \code{empty_to_na()} converts the received array to single value
@@ -51,7 +110,7 @@ empty_to_na <- function(x) {
 #' given as input.
 #'
 #' @examples
-#' my_html <- read_html('https://boardgamegeek.com/xmlapi2/collection?username=alizat')
+#' my_html <- stubborn_html_reader('https://boardgamegeek.com/xmlapi2/collection?username=alizat')
 #' my_elements <- html_elements(my_html, 'item')
 #' my_features <- c(name = 'name', own = 'status::own', wanttoplay = 'status::wanttoplay', wanttobuy = 'status::wanttobuy')
 #' features_extractor(my_elements, my_features)
@@ -134,7 +193,7 @@ thing <- function(ids) {
     
     # game details
     link <- paste0('https://www.boardgamegeek.com/xmlapi2/thing?id=', ids, '&stats=1')
-    items <- html_elements(read_html(link), 'item')
+    items <- html_elements(stubborn_html_reader(link), 'item')
     
     # features to extract
     features_to_extract <-
@@ -193,7 +252,7 @@ collection <- function(username) {
     link <- paste0('https://boardgamegeek.com/xmlapi2/collection?username=', username, '&stats=1')
     
     # obtain html page
-    html_page <- read_html(link)
+    html_page <- stubborn_html_reader(link)
     
     # elements to parse features
     items <- html_elements(html_page, 'item')
@@ -256,7 +315,7 @@ categories <- function() {
     link <- 'https://boardgamegeek.com/browse/boardgamecategory'
     
     # obtain html page
-    page <- read_html(link)
+    page <- stubborn_html_reader(link)
     
     # retrieve categories
     categories     <- html_text(html_elements(page, '.forum_table tr > td > a'))
@@ -285,7 +344,7 @@ mechanics <- function() {
     link <- 'https://boardgamegeek.com/browse/boardgamemechanic'
     
     # obtain html page
-    page <- read_html(link)
+    page <- stubborn_html_reader(link)
     
     # retrieve mechanics
     mechanics     <- html_text(html_elements(page, '.forum_table tr > td > a'))
@@ -314,7 +373,7 @@ mechanics <- function() {
 #' indx
 last_page_index <- function(link) {
     # paginator
-    paginator <- read_html(link)
+    paginator <- stubborn_html_reader(link)
     paginator <- html_elements(paginator, '.fr a')
     
     # html element corresponding to last page
@@ -364,7 +423,7 @@ designers <- function(wait = 10, verbose = FALSE) {
         
         # retrieve page i
         page_i <- glue('{link}/page/{i}')
-        page_i <- read_html(page_i)
+        page_i <- stubborn_html_reader(page_i)
         
         # designers of page i
         designers_i <- html_elements(page_i, 'table > tr > td > a')
@@ -405,7 +464,7 @@ designers <- function(wait = 10, verbose = FALSE) {
 }
 
 # TODO: add note that the above code fails to retrieve pages beyond page 20
-#     `read_html(page_i)` returns empty page when i > 20
+#     `stubborn_html_reader(page_i)` returns empty page when i > 20
 
 
 
@@ -442,7 +501,7 @@ families <- function(wait = 10, verbose = FALSE) {
         
         # retrieve page i
         page_i <- glue('{link}/page/{i}')
-        page_i <- read_html(page_i)
+        page_i <- stubborn_html_reader(page_i)
         
         # families of page i
         families_i <- html_elements(page_i, 'table > tr > td > a')
@@ -483,7 +542,7 @@ families <- function(wait = 10, verbose = FALSE) {
 }
 
 # TODO: add note that the above code fails to retrieve pages beyond page 20
-#     `read_html(page_i)` returns empty page when i > 20
+#     `stubborn_html_reader(page_i)` returns empty page when i > 20
 
 
 
@@ -505,7 +564,7 @@ families <- function(wait = 10, verbose = FALSE) {
 forumlist <- function(forumlist_id, type = 'thing') {
     # forums
     link <- paste0('https://www.boardgamegeek.com/xmlapi2/forumlist?id=', forumlist_id, '&type=', type)
-    forums <- html_elements(read_html(link), 'forum')
+    forums <- html_elements(stubborn_html_reader(link), 'forum')
     
     # parse
     features_to_extract <-
@@ -545,7 +604,7 @@ forumlist <- function(forumlist_id, type = 'thing') {
 forum <- function(forum_id) {
     # forum threads
     link <- paste0('https://www.boardgamegeek.com/xmlapi2/forum?id=', forum_id)
-    threads <- html_elements(read_html(link), 'thread')
+    threads <- html_elements(stubborn_html_reader(link), 'thread')
     
     # parse
     features_to_extract <-
@@ -582,7 +641,7 @@ forum <- function(forum_id) {
 thread <- function(thread_id) {
     # forum threads
     link           <- paste0('https://www.boardgamegeek.com/xmlapi2/thread?id=', thread_id)
-    thread_details <- read_html(link)
+    thread_details <- stubborn_html_reader(link)
     thread_subject <- html_text(html_elements(thread_details, 'thread > subject'))
     articles       <- html_elements(thread_details, 'article')
     
@@ -631,7 +690,7 @@ guild <- function(guild_id, members = 1, sort_by = 'username') {
     link <- glue('https://boardgamegeek.com/xmlapi2/guild?id={guild_id}&members={members}&sort={sort_by}')
     
     # html page
-    page <- read_html(link)
+    page <- stubborn_html_reader(link)
     
     # guild info
     guild_details <- html_elements(page, 'guild')
@@ -662,7 +721,7 @@ guild <- function(guild_id, members = 1, sort_by = 'username') {
         page_link <- paste0(link, '&page=', page_no)
         
         # page itself
-        page <- read_html(page_link)
+        page <- stubborn_html_reader(page_link)
         
         # members
         members_list <- html_elements(page, 'member')
@@ -698,7 +757,7 @@ hot <- function(type = 'boardgame') {
     link <- glue('https://boardgamegeek.com/xmlapi2/hot?type={type}')
     
     # html page
-    page <- read_html(link)
+    page <- stubborn_html_reader(link)
     
     # hot items
     items <- html_elements(page, 'item')
@@ -771,7 +830,7 @@ plays <- function(item_id = NULL,
         link_base <- paste0(link_base, '&subtype=', subtype)
     
     # number of pages
-    page      <- read_html(link_base)
+    page      <- stubborn_html_reader(link_base)
     num_plays <- html_attr(html_elements(page, 'plays'), 'total')
     num_plays <- as.numeric(num_plays)
     num_pages <- ceiling(num_plays / 100)
@@ -781,7 +840,7 @@ plays <- function(item_id = NULL,
     for (i in 1:num_pages) {
         # retrieve page i
         page_i <- glue('{link_base}&page={i}')
-        page_i <- html_elements(read_html(page_i), 'plays')
+        page_i <- html_elements(stubborn_html_reader(page_i), 'plays')
         
         # get plays of page i
         plays_i <- html_elements(page_i, 'play')
@@ -861,13 +920,13 @@ searchbgg <- function(query,
     if (is.null(type) || type == 'boardgame') {
         # both board games and expansions
         link         <- glue('https://boardgamegeek.com/xmlapi2/search?query={query}&type=boardgame')
-        page         <- read_html(link)
+        page         <- stubborn_html_reader(link)
         all_items    <- html_elements(page, 'item')
         query_result <- features_extractor(all_items, my_features)
         
         # just expansions
         link           <- glue('https://boardgamegeek.com/xmlapi2/search?query={query}&type=boardgameexpansion')
-        page           <- read_html(link)
+        page           <- stubborn_html_reader(link)
         expansions     <- html_elements(page, 'item')
         expansions_ids <- html_attr(expansions, 'id')
         
@@ -883,7 +942,7 @@ searchbgg <- function(query,
     } else {
         # type was specified as something other than 'boardgame'
         link         <- glue('https://boardgamegeek.com/xmlapi2/search?query={query}&type={type}')
-        page         <- read_html(link)
+        page         <- stubborn_html_reader(link)
         all_items    <- html_elements(page, 'item')
         query_result <- features_extractor(all_items, my_features)
     }
@@ -916,7 +975,7 @@ searchbgg <- function(query,
 #' top_500_game_ids
 top_k_games_ids <- function(k = 100, wait = 10) {
     # initialize
-    games_ids_all <- c()
+    top_k_games <- c()
     
     # lower bound for k is 1
     if (k < 1) {
@@ -934,10 +993,10 @@ top_k_games_ids <- function(k = 100, wait = 10) {
     
     # loop on pages
     i <- 1
-    while (length(games_ids_all) < k) {
+    while (length(top_k_games) < k) {
         # retrieve page i
         page_i <- glue('https://boardgamegeek.com/search/boardgame/page/{i}?advsearch=1&q=&sort=rank&sortdir=asc')
-        page_i <- read_html(page_i)
+        page_i <- stubborn_html_reader(page_i)
         page_i <- html_elements(page_i, xpath = '//*[@id="collectionitems"]')
         
         # grab game ids of page i
@@ -950,7 +1009,8 @@ top_k_games_ids <- function(k = 100, wait = 10) {
             break
         
         # append
-        games_ids_all <- c(games_ids_all, games_ids)
+        top_k_games <- c(top_k_games, games_ids)
+        print(glue('{length(top_k_games)} game ids collected so far'))
         
         # increment i
         i <- i + 1
@@ -960,18 +1020,18 @@ top_k_games_ids <- function(k = 100, wait = 10) {
     }
     
     # keep k game ids
-    if (length(games_ids_all) > 0) {
-        # precaution: length(games_ids_all) may be lower than k
-        k <- min(k, length(games_ids_all))
+    if (length(top_k_games) > 0) {
+        # precaution: it might happen that length(top_k_games) != k
+        k <- min(k, length(top_k_games))
     
         # keep number of games requested
-        games_ids_all <- games_ids_all[1:k]
+        top_k_games <- top_k_games[1:k]
     } else {
         message("That's odd... No games retrieved?")
     }
     
     # return
-    games_ids_all
+    top_k_games
 }
 
 
@@ -1002,7 +1062,7 @@ user <- function(username, buddies = 0, guilds = 0, hot = 0, top = 0) {
     link <- paste0(link, '&top=',     top)
     
     # obtain html page
-    html_page <- read_html(link)
+    html_page <- stubborn_html_reader(link)
     
     # elements to parse features
     buddies <- if ( buddies        ) html_elements(html_page, 'buddies') else NULL
@@ -1059,21 +1119,21 @@ user <- function(username, buddies = 0, guilds = 0, hot = 0, top = 0) {
 
 
 
-#' Specific Year's Games IDs
+#' Specific year's "ranked" games IDs
 #'
-#' @description \code{year_games_ids()} retrieves the ids of the games that came
-#'   out in the specified year.
+#' @description \code{year_ranked_games_ids()} retrieves the ids of ranked games
+#'   that came out in the specified year.
 #'
-#' @param y year to get games ids for
+#' @param y year to get ranked games ids for
 #' @param wait number of seconds to wait between HTML pages as they are scraped
 #'
 #' @return
-#' Games IDs for the selected year, \code{y}.
+#' Ranked games IDs for the selected year, \code{y}.
 #'
 #' @examples
-#' year_1995_game_ids <- year_games_ids(y = 1995)
-#' year_1995_game_ids
-year_games_ids <- function(y, wait = 10) {
+#' year_1995_ranked_game_ids <- year_ranked_games_ids(y = 1995)
+#' year_1995_ranked_game_ids
+year_ranked_games_ids <- function(y, wait = 10) {
     # initialize
     games_ids_all <- c()
     
@@ -1090,19 +1150,31 @@ year_games_ids <- function(y, wait = 10) {
     for (i in 1:last_page) {
         # retrieve page i
         page_i <- glue('{link_base}/page/{i}?{params}')
-        page_i <- read_html(page_i)
+        page_i <- stubborn_html_reader(page_i)
         page_i <- html_elements(page_i, xpath = '//*[@id="collectionitems"]')
         
         # grab game ids of page i
-        games_ids <- html_attr(html_elements(page_i, 'tr > td > div > a'), 'href')
+        games_ids   <- html_attr(html_elements(page_i, 'tr > td > div > a'), 'href')
+        
+        # keep only ranked games
+        games_ranks <- html_attr(html_elements(page_i, 'tr > .collection_rank > a'), 'name')
+        games_ids <- games_ids[which(games_ranks != 'NA')]
+        
+        # exit if no games retrieved
         if (length(games_ids) == 0)
             break
+        
+        # extract the ids
         games_ids <- str_extract(games_ids, '/[:digit:]+/')
         games_ids <- str_replace_all(games_ids, '/', '')
         
         # append
         games_ids_all <- c(games_ids_all, games_ids)
         print(glue('{length(games_ids_all)} game ids collected so far'))
+
+        # exit if we reached the unranked games
+        if (any(games_ranks == 'NA'))
+            break
         
         # duration to sleep so BGG website would not block us
         if (i != last_page) {
