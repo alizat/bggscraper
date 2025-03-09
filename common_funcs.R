@@ -173,7 +173,7 @@ features_extractor <- function(elements, features) {
 
 
 
-#' Thing Info
+#' Thing Info - Supplementary info for board game ids
 #'
 #' @description \code{thing()} retrieves the available information of the
 #'   specified items (i.e. board games and board game expansions).
@@ -188,12 +188,9 @@ features_extractor <- function(elements, features) {
 #' games_details <- thing(c(158600, 194607, 40849))
 #' games_details
 thing <- function(ids) {
-    # merge ids
-    ids <- paste(ids, collapse = ',')
-    
-    # game details
-    link <- paste0('https://www.boardgamegeek.com/xmlapi2/thing?id=', ids, '&stats=1')
-    items <- html_elements(stubborn_html_reader(link), 'item')
+    # split ids into groups of 20
+    # (BGG's thing() function refuses to work on more than 20 ids at a time)
+    split_ids <- split(ids, ceiling(seq_along(ids) / 20))
     
     # features to extract
     features_to_extract <-
@@ -226,8 +223,29 @@ thing <- function(ids) {
             avg_weight = 'ratings > averageweight::value'
         )
     
-    # extract features
-    items_details <- features_extractor(items, features_to_extract)
+    # for every 20 ids...
+    items_details <- tibble()
+    for (i in 1:length(split_ids)) {
+        # merge ids
+        ids_i <- paste(split_ids[[i]], collapse = ',')
+        
+        # game details
+        link <- paste0('https://www.boardgamegeek.com/xmlapi2/thing?id=', ids_i, '&stats=1')
+        items <- html_elements(stubborn_html_reader(link), 'item')
+        
+        # extract features
+        items_details_i <- features_extractor(items, features_to_extract)
+        
+        # append
+        items_details <- rbind(items_details, items_details_i)
+        print(glue('{nrow(items_details)} game ids info gathered so far'))
+        
+        # if loop did not reach its end yet...
+        if (i != length(split_ids))
+            Sys.sleep(1)
+    }
+    
+    # return
     items_details
 }
 

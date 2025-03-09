@@ -31,13 +31,7 @@ View(my_collection_wishlist_5_plus_players)
 
 
 # supplementary info for my owned games
-num_games_owned <- nrow(my_collection_owned)
-batch_size <- 10
-owned_games_info <- tibble()
-for (i in seq(1, num_games_owned, batch_size)) {
-    owned_games_info <- rbind(owned_games_info, thing(my_collection_owned$item_id[i:min(i + batch_size - 1, num_games_owned)]))
-    Sys.sleep(1)
-}
+owned_games_info <- thing(my_collection_owned$item_id)
 
 
 
@@ -60,13 +54,7 @@ print(remaining_bg_mechanics)
 
 
 # any of 'remaining_bg_categories' or 'remaining_bg_mechanics' in my wishlisted games?
-num_games_wishlist <- nrow(my_collection_wishlist)
-batch_size <- 10
-wishlist_games_info <- tibble()
-for (i in seq(1, num_games_wishlist, batch_size)) {
-    wishlist_games_info <- rbind(wishlist_games_info, thing(my_collection_wishlist$item_id[i:min(i + batch_size - 1, num_games_wishlist)]))
-    Sys.sleep(1)
-}
+wishlist_games_info <- thing(my_collection_wishlist$item_id)
 my_wishlist_missing_categories_mechanics <- 
     wishlist_games_info %>% 
     select(name, category, mechanic) %>% 
