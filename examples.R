@@ -70,38 +70,12 @@ View(my_wishlist_missing_categories_mechanics)
 
 
 
-# get all ranked BGG games ids from 1990 till 2024
-ranked_games_ids_by_year <- list()
-for (y in 1990:2025) {
-    print(glue(''))
-    print(glue('Retrieving {y}:'))
-    ranked_games_ids_y <- year_ranked_games_ids(y, wait = 5)
-    ranked_games_ids_by_year[[as.character(y)]] <- ranked_games_ids_y
-    Sys.sleep(5)
-}
-ranked_games_ids_by_year %>% write_rds('ranked_games_ids_by_year.rds')
-
-
-
 # get current top 1K games at BGG & observe the years they were published
-ranked_games_ids_by_year <- read_rds('ranked_games_ids_by_year.rds')
-top_1K_games_ids <- top_k_games_ids(k = 1000)
+top_1K_games_info <- read_rds('top_1K_games_info.rds')
 top_1K_games_years_published <- 
-    tibble(
-    game_id = top_1K_games_ids, 
-    year_published = 
-        map_chr(
-            top_1K_games_ids, 
-            function(my_game) {
-                year_published <- '< 1990'
-                year_indx <- which(map_lgl(ranked_games_ids_by_year, ~ my_game %in% .x))
-                if (length(year_indx)) {
-                    year_published <- names(ranked_games_ids_by_year)[year_indx[[1]]]
-                }
-                year_published
-            }
-        )
-)
+    top_1K_games_info %>% 
+    select(year_published) %>% 
+    mutate(year_published = if_else(year_published < "1990", "< 1990", year_published))
 p <- 
     top_1K_games_years_published %>% 
     count(year_published) %>%
@@ -112,10 +86,4 @@ print(p)
 
 
 # 20 most occurring families in the current top 1K games
-batch_size <- 10
-top_1K_games_info <- tibble()
-for (i in seq(1, 1000, batch_size)) {
-    top_1K_games_info <- rbind(top_1K_games_info, thing(top_1K_games_ids[i:min(i + batch_size - 1, 1000)]))
-    Sys.sleep(1)
-}
 top_1K_games_info$family %>% unlist() %>% table() %>% sort(decreasing = TRUE) %>% head(20)
