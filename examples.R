@@ -7,6 +7,8 @@ suppressMessages({
 # my collection (owned games + wishlisted games)
 # https://boardgamegeek.com/collection/user/alizat
 my_collection <- collection('alizat')
+# sometimes, the above statement does not work the first time.
+# run again in case of an error.
 
 
 
@@ -87,3 +89,38 @@ print(p)
 
 # 20 most occurring families in the current top 1K games
 top_1K_games_info$family %>% unlist() %>% table() %>% sort(decreasing = TRUE) %>% head(20)
+
+
+
+# Get text reviews of a game / game expansion
+game_id <- 40849  # Pandemic: On the Brink (expansion)
+game_forumlist <- forumlist(40849)  # get list of forums for this game
+# from these forums, we are particularly interested in the "Reviews" forum
+game_reviews_forumlist_id <- 
+    forumlist_pandemic_on_the_brink %>% 
+    filter(title == 'Reviews') %>% 
+    pull(forum_id)
+# get reviews
+game_reviews_list <- forum(game_reviews_forumlist_id)
+game_reviews_threads <- game_reviews_list$thread_id %>% map(thread)
+game_reviews <- 
+    game_reviews_threads %>% 
+    map_dfr(~ .x[1,])  # first entry in each thread is the actual review
+# clean up the HTML-like tags in the reviews
+review_body_cleaner <- function(text)  {
+    text %>% 
+        str_squish() %>% 
+        str_replace_all('<b>|</b>', '**') %>% 
+        str_replace_all('<i>|</i>', '_') %>% 
+        str_remove_all('<center>|</center>|\\[|\\]') %>% 
+        str_replace_all('<br/>', '\n')
+}
+game_reviews$body <- review_body_cleaner(game_reviews$body)
+# display a couple of reviews
+print(glue(''))
+print(glue('Review 1'))
+print(glue(game_reviews$body[[2]]))
+print(glue(''))
+print(glue('Review 2'))
+print(glue(game_reviews$body[[4]]))
+print(glue(''))
