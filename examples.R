@@ -87,8 +87,22 @@ print(p)
 
 
 
-# 20 most occurring families in the current top 1K games
-top_1K_games_info$family %>% unlist() %>% table() %>% sort(decreasing = TRUE) %>% head(20)
+# 20 most occurring ... in the current top 1K games
+top_1K_games_info$family    %>% unlist()           %>% table() %>% sort(decreasing = TRUE) %>% head(20)
+top_1K_games_info$designer  %>% unlist()           %>% table() %>% sort(decreasing = TRUE) %>% head(20)
+top_1K_games_info$mechanic  %>% unlist()           %>% table() %>% sort(decreasing = TRUE) %>% head(20)
+top_1K_games_info$category  %>% unlist()           %>% table() %>% sort(decreasing = TRUE) %>% head(20)
+top_1K_games_info$publisher %>% map_chr(~ .x[[1]]) %>% table() %>% sort(decreasing = TRUE) %>% head(20)
+
+
+
+# Distribution of average game weight in the current top 1K games
+top_1K_games_info$avg_weight %>% 
+    as.numeric() %>% 
+    hist(breaks = seq(1, 5, 0.25), 
+         main = 'Average weights of top 1K games', 
+         xlab = 'Average weight', 
+         ylab = 'Frequency')
 
 
 
