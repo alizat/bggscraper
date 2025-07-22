@@ -138,3 +138,20 @@ print(glue(''))
 print(glue('Review 2'))
 print(glue(game_reviews$body[[4]]))
 print(glue(''))
+
+
+
+# suggest a bunch of random mechanics & categories
+boardgamizer <- function(num_categories, num_mechanics) {
+    random_categories <- dplyr::sample_n(categories(), num_categories)
+    random_mechanics  <- dplyr::sample_n(mechanics(),  num_mechanics)
+    
+    return_me <- 
+        rbind(
+            tibble::tibble(type = 'category', id = random_categories[[1]], name = random_categories[[2]]),
+            tibble::tibble(type = 'mechanic', id = random_mechanics[[1]],  name = random_mechanics[[2]])
+        )
+    
+    return_me
+}
+boardgamizer(num_categories = 3, num_mechanics = 5)
