@@ -70,7 +70,7 @@ retry_my_func <- function(my_func, ..., time_between_tries = 2) {
 #' stubborn_html_reader('https://www.imdb.com/')
 stubborn_html_reader <- function(link) {
     html_page <- retry_my_func(read_html, link)
-    while (nchar(html_text(html_page)) < 150) {
+    while (html_text(html_page) != '' && nchar(html_text(html_page)) < 150) {
         print(glue(''))
         print(glue('Page retrieval failed! Retrying again in 5 seconds...'))
         Sys.sleep(5)

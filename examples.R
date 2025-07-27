@@ -7,8 +7,6 @@ suppressMessages({
 # my collection (owned games + wishlisted games)
 # https://boardgamegeek.com/collection/user/alizat
 my_collection <- collection('alizat')
-# sometimes, the above statement does not work the first time.
-# run again in case of an error.
 
 
 
@@ -34,6 +32,7 @@ View(my_collection_wishlist_5_plus_players)
 
 # supplementary info for my owned games
 owned_games_info <- thing(my_collection_owned$item_id)
+print(owned_games_info)
 
 
 
@@ -88,11 +87,11 @@ print(p)
 
 
 # 20 most occurring ... in the current top 1K games
-top_1K_games_info$family    %>% unlist()           %>% table() %>% sort(decreasing = TRUE) %>% head(20)
-top_1K_games_info$designer  %>% unlist()           %>% table() %>% sort(decreasing = TRUE) %>% head(20)
-top_1K_games_info$mechanic  %>% unlist()           %>% table() %>% sort(decreasing = TRUE) %>% head(20)
-top_1K_games_info$category  %>% unlist()           %>% table() %>% sort(decreasing = TRUE) %>% head(20)
-top_1K_games_info$publisher %>% map_chr(~ .x[[1]]) %>% table() %>% sort(decreasing = TRUE) %>% head(20)
+top_1K_games_info$family    %>% unlist()           %>% table() %>% sort(decreasing = TRUE) %>% head(20) %>% print()
+top_1K_games_info$designer  %>% unlist()           %>% table() %>% sort(decreasing = TRUE) %>% head(20) %>% print()
+top_1K_games_info$mechanic  %>% unlist()           %>% table() %>% sort(decreasing = TRUE) %>% head(20) %>% print()
+top_1K_games_info$category  %>% unlist()           %>% table() %>% sort(decreasing = TRUE) %>% head(20) %>% print()
+top_1K_games_info$publisher %>% map_chr(~ .x[[1]]) %>% table() %>% sort(decreasing = TRUE) %>% head(20) %>% print()
 
 
 
@@ -111,7 +110,7 @@ game_id <- 40849  # Pandemic: On the Brink (expansion)
 game_forumlist <- forumlist(40849)  # get list of forums for this game
 # from these forums, we are particularly interested in the "Reviews" forum
 game_reviews_forumlist_id <- 
-    forumlist_pandemic_on_the_brink %>% 
+    game_forumlist %>% 
     filter(title == 'Reviews') %>% 
     pull(forum_id)
 # get reviews
@@ -154,4 +153,4 @@ boardgamizer <- function(num_categories, num_mechanics) {
     
     return_me
 }
-boardgamizer(num_categories = 3, num_mechanics = 5)
+print(boardgamizer(num_categories = 3, num_mechanics = 5))
