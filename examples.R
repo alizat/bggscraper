@@ -58,15 +58,19 @@ print(remaining_bg_mechanics)
 wishlist_games_info <- thing(my_collection_wishlist$item_id)
 my_wishlist_missing_categories_mechanics <- 
     wishlist_games_info %>% 
-    select(name, category, mechanic) %>% 
+    inner_join(my_collection_wishlist %>% select(item_name, want_to_buy, want_to_play), by = c('name' = 'item_name')) %>%
     filter(map_lgl(category, ~any(remaining_bg_categories %in% .x)) | map_lgl(mechanic, ~any(remaining_bg_mechanics %in% .x))) %>% 
     mutate(
-        missing_category = map_chr(category, ~ intersect(.x, remaining_bg_categories) %>% paste(collapse = ', ')), 
-        missing_mechanic = map_chr(mechanic, ~ intersect(.x, remaining_bg_mechanics)  %>% paste(collapse = ', ')), 
+        missing_categories     = map_chr(category, ~ intersect(.x, remaining_bg_categories) %>% paste(collapse = ', ')), 
+        num_missing_categories = map_int(missing_categories, ~ str_count(.x, ', ') + 1),
+        num_missing_categories = if_else(missing_categories == '', 0L, num_missing_categories),
+        missing_mechanics      = map_chr(mechanic, ~ intersect(.x, remaining_bg_mechanics)  %>% paste(collapse = ', ')), 
+        num_missing_mechanics  = map_int(missing_mechanics,  ~ str_count(.x, ', ') + 1),
+        num_missing_mechanics  = if_else(missing_mechanics == '', 0L, num_missing_mechanics),
         # category = category %>% map_chr(~ .x %>% paste(collapse = ', ')),
         # mechanic = mechanic %>% map_chr(~ .x %>% paste(collapse = ', '))
     ) %>% 
-    select(name, missing_category, missing_mechanic)  # , category, mechanic
+    select(name, want_to_buy, want_to_play, missing_categories, num_missing_categories, missing_mechanics, num_missing_mechanics)
 View(my_wishlist_missing_categories_mechanics)
 
 
