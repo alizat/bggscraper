@@ -64,13 +64,22 @@ my_wishlist_missing_categories_mechanics <-
         missing_categories     = map_chr(category, ~ intersect(.x, remaining_bg_categories) %>% paste(collapse = ', ')), 
         num_missing_categories = map_int(missing_categories, ~ str_count(.x, ', ') + 1),
         num_missing_categories = if_else(missing_categories == '', 0L, num_missing_categories),
+        all_categories         = category %>% map_chr(~ .x %>% paste(collapse = ', ')),
+        
         missing_mechanics      = map_chr(mechanic, ~ intersect(.x, remaining_bg_mechanics)  %>% paste(collapse = ', ')), 
         num_missing_mechanics  = map_int(missing_mechanics,  ~ str_count(.x, ', ') + 1),
         num_missing_mechanics  = if_else(missing_mechanics == '', 0L, num_missing_mechanics),
-        # category = category %>% map_chr(~ .x %>% paste(collapse = ', ')),
-        # mechanic = mechanic %>% map_chr(~ .x %>% paste(collapse = ', '))
+        all_mechanics          = mechanic %>% map_chr(~ .x %>% paste(collapse = ', '))
     ) %>% 
-    select(name, want_to_buy, want_to_play, missing_categories, num_missing_categories, missing_mechanics, num_missing_mechanics)
+    select(
+        name, min_players, max_players, playing_time, rating_avg, rating_bayes_avg, 
+        want_to_buy, want_to_play, 
+        missing_categories, num_missing_categories, #all_categories, 
+        missing_mechanics, num_missing_mechanics, #all_mechanics
+    ) %>% 
+    mutate(across(c(min_players:rating_bayes_avg), as.numeric)) %>% 
+    mutate_if(is.numeric, as.numeric) %>% 
+    arrange(desc(num_missing_categories), desc(num_missing_mechanics), desc(rating_bayes_avg))
 View(my_wishlist_missing_categories_mechanics)
 
 
