@@ -11,14 +11,12 @@ scrape all sorts of (publicly accessible) data from the [Board Game
 Geek](boardgamegeek.com) website. It depends heavily on the [BGG XML
 API2](https://boardgamegeek.com/wiki/page/BGG_XML_API2) library.
 
-`bggscraper` was previously an R package, that could be installeda and
+`bggscraper` was previously an R package, that could be installed and
 used. However, I decided against making it a package because I found
 myself wasting quite a lot of time doing package development as opposed
 to writing the scraping code itself. Perhaps, when I am done writing all
 the code for scraping the BGG website, I will convert it back to an R
 package again; however, this remains to be seen.
-
-***Note: This is a work in progress!***
 
 Using this library, you may scrape the following info (among others):
 
