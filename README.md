@@ -20,8 +20,7 @@ package again; however, this remains to be seen.
 
 Using this library, you may scrape the following info (among others):
 
-- list of [top 5000 board
-  games](https://boardgamegeek.com/search/boardgame?advsearch=1&q=&sort=rank)
+- list of [top 5000 board games](https://boardgamegeek.com/search/boardgame?advsearch=1&q=&sort=rank)
   as per the rankings on BGG.
 - details on board games and board game expansions (i.e., categories,
   mechanics, designers, etc.)
@@ -32,6 +31,24 @@ Using this library, you may scrape the following info (among others):
 - information on plays of a certain game for one or more users.
 - geeklists, forum lists, forums, threads or guilds pertaining to a
   certain board game id.
+
+## How to Use
+
+In order to use the `bggscraper` functionality, you will need to acquire a 
+**BGG application token** first. Instructions can be found at  
+[this link](https://boardgamegeek.com/using_the_xml_api) under the heading 
+*Application Tokens*.
+
+Note that once you apply for a BGG application token, it may may take some time
+until they provide you with one. Until you do, you may check regularly at
+[https://boardgamegeek.com/applications](https://boardgamegeek.com/applications)
+to check whether you have received it yet.
+
+Once you have acquired a BGG application token, you may add it in the script
+called `load_bgg_token.R` and you're good to go! To test, you may run the
+`examples.R` script to ensure everything is working fine.
+
+Enjoy!
 
 ## Examples
 

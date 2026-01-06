@@ -4,11 +4,20 @@
 
 
 
+# TODO: Move BGG token below into into an untracked file (.env?)
+# TODO: Add to README  -->  how to get BGG token!
+# TODO: Mention that any usages of XML API 2 needed removal of "www." from all urls!
+
+
+
 suppressMessages({
     library(tidyverse)
     library(lubridate)
     library(glue)
     library(rvest)
+    library(httr2)
+    
+    source('load_bgg_token.R')
     
     options(dplyr.summarise.inform = FALSE)
 })
@@ -58,8 +67,8 @@ retry_my_func <- function(my_func, ..., time_between_tries = 2) {
 #' Stubbornly get the html content of a web page.
 #'
 #' @description Sometimes, retrieval of a web page fails for whatever reason.
-#'   This will keep on calling the \code{stubborn_html_reader()} on it until it
-#'   finally gets back with the result.
+#'   This will keep on calling the \code{rvest::read_html()} function on it 
+#'   until it finally gets back with the result.
 #'
 #' @param link web page to be read
 #'
@@ -75,6 +84,34 @@ stubborn_html_reader <- function(link) {
         print(glue('Page retrieval failed! Retrying again in 5 seconds...'))
         Sys.sleep(5)
         html_page <- retry_my_func(read_html, link)
+        print(glue(''))
+    }
+    html_page
+}
+
+
+
+#' Stubbornly get the xml content of a web page.
+#'
+#' @description Sometimes, retrieval of a web page fails for whatever reason.
+#'   This will keep on calling the \code{httr2::req_perform()} function on it 
+#'   until it finally gets back with the result.
+#'
+#' @param link web page to be read
+#'
+#' @return
+#' html content of the given link
+#'
+#' @examples
+#' stubborn_html_reader('https://imdb.com/')
+stubborn_xml_reader <- function(link) {
+    req <- request(link) %>% req_headers(Authorization = paste("Bearer", BGG_TOKEN))
+    html_page <- retry_my_func(req_perform, req) %>% resp_body_xml()
+    while (html_text(html_page) != '' && nchar(html_text(html_page)) < 150) {
+        print(glue(''))
+        print(glue('Page retrieval failed! Retrying again in 5 seconds...'))
+        Sys.sleep(5)
+        html_page <- retry_my_func(req_perform, req) %>% resp_body_xml()
         print(glue(''))
     }
     html_page
@@ -118,7 +155,7 @@ empty_to_na <- function(x) {
 #' given as input.
 #'
 #' @examples
-#' my_html <- stubborn_html_reader('https://boardgamegeek.com/xmlapi2/collection?username=alizat')
+#' my_html <- stubborn_xml_reader('https://boardgamegeek.com/xmlapi2/collection?username=alizat')
 #' my_elements <- html_elements(my_html, 'item')
 #' my_features <- c(name = 'name', own = 'status::own', wanttoplay = 'status::wanttoplay', wanttobuy = 'status::wanttobuy')
 #' features_extractor(my_elements, my_features)
@@ -238,8 +275,8 @@ thing <- function(ids) {
         ids_i <- paste(split_ids[[i]], collapse = ',')
         
         # game details
-        link <- paste0('https://www.boardgamegeek.com/xmlapi2/thing?id=', ids_i, '&stats=1')
-        items <- html_elements(stubborn_html_reader(link), 'item')
+        link <- paste0('https://boardgamegeek.com/xmlapi2/thing?id=', ids_i, '&stats=1')
+        items <- html_elements(stubborn_xml_reader(link), 'item')
         
         # extract features
         items_details_i <- features_extractor(items, features_to_extract)
@@ -278,7 +315,7 @@ collection <- function(username) {
     link <- paste0('https://boardgamegeek.com/xmlapi2/collection?username=', username, '&stats=1')
     
     # obtain html page
-    html_page <- stubborn_html_reader(link)
+    html_page <- stubborn_xml_reader(link)
     
     # elements to parse features
     items <- html_elements(html_page, 'item')
@@ -589,8 +626,8 @@ families <- function(wait = 10, verbose = FALSE) {
 #' forumlist_pandemic_on_the_brink
 forumlist <- function(forumlist_id, type = 'thing') {
     # forums
-    link <- paste0('https://www.boardgamegeek.com/xmlapi2/forumlist?id=', forumlist_id, '&type=', type)
-    forums <- html_elements(stubborn_html_reader(link), 'forum')
+    link <- paste0('https://boardgamegeek.com/xmlapi2/forumlist?id=', forumlist_id, '&type=', type)
+    forums <- html_elements(stubborn_xml_reader(link), 'forum')
     
     # parse
     features_to_extract <-
@@ -629,8 +666,8 @@ forumlist <- function(forumlist_id, type = 'thing') {
 #' forum(2418)
 forum <- function(forum_id) {
     # forum threads
-    link <- paste0('https://www.boardgamegeek.com/xmlapi2/forum?id=', forum_id)
-    threads <- html_elements(stubborn_html_reader(link), 'thread')
+    link <- paste0('https://boardgamegeek.com/xmlapi2/forum?id=', forum_id)
+    threads <- html_elements(stubborn_xml_reader(link), 'thread')
     
     # parse
     features_to_extract <-
@@ -666,8 +703,8 @@ forum <- function(forum_id) {
 #' pandemic_on_the_brink_review
 thread <- function(thread_id) {
     # forum threads
-    link           <- paste0('https://www.boardgamegeek.com/xmlapi2/thread?id=', thread_id)
-    thread_details <- stubborn_html_reader(link)
+    link           <- paste0('https://boardgamegeek.com/xmlapi2/thread?id=', thread_id)
+    thread_details <- stubborn_xml_reader(link)
     thread_subject <- html_text(html_elements(thread_details, 'thread > subject'))
     articles       <- html_elements(thread_details, 'article')
     
@@ -685,8 +722,7 @@ thread <- function(thread_id) {
         )
     articles_info <- features_extractor(articles, features_to_extract)
     articles_info$thread_id <- thread_id
-    articles_info$thread_subject <- thread_subject
-    articles_info <- select(articles_info, thread_id, thread_subject, everything())
+    articles_info <- select(articles_info, thread_id, subject, everything())
     articles_info$body <- str_remove(articles_info$body, paste0('^', articles_info$subject))
     
     # return
@@ -716,7 +752,7 @@ guild <- function(guild_id, members = 1, sort_by = 'username') {
     link <- glue('https://boardgamegeek.com/xmlapi2/guild?id={guild_id}&members={members}&sort={sort_by}')
     
     # html page
-    page <- stubborn_html_reader(link)
+    page <- stubborn_xml_reader(link)
     
     # guild info
     guild_details <- html_elements(page, 'guild')
@@ -747,7 +783,7 @@ guild <- function(guild_id, members = 1, sort_by = 'username') {
         page_link <- paste0(link, '&page=', page_no)
         
         # page itself
-        page <- stubborn_html_reader(page_link)
+        page <- stubborn_xml_reader(page_link)
         
         # members
         members_list <- html_elements(page, 'member')
@@ -783,7 +819,7 @@ hot <- function(type = 'boardgame') {
     link <- glue('https://boardgamegeek.com/xmlapi2/hot?type={type}')
     
     # html page
-    page <- stubborn_html_reader(link)
+    page <- stubborn_xml_reader(link)
     
     # hot items
     items <- html_elements(page, 'item')
@@ -856,7 +892,7 @@ plays <- function(item_id = NULL,
         link_base <- paste0(link_base, '&subtype=', subtype)
     
     # number of pages
-    page      <- stubborn_html_reader(link_base)
+    page      <- stubborn_xml_reader(link_base)
     num_plays <- html_attr(html_elements(page, 'plays'), 'total')
     num_plays <- as.numeric(num_plays)
     num_pages <- ceiling(num_plays / 100)
@@ -866,7 +902,7 @@ plays <- function(item_id = NULL,
     for (i in 1:num_pages) {
         # retrieve page i
         page_i <- glue('{link_base}&page={i}')
-        page_i <- html_elements(stubborn_html_reader(page_i), 'plays')
+        page_i <- html_elements(stubborn_xml_reader(page_i), 'plays')
         
         # get plays of page i
         plays_i <- html_elements(page_i, 'play')
@@ -946,13 +982,13 @@ searchbgg <- function(query,
     if (is.null(type) || type == 'boardgame') {
         # both board games and expansions
         link         <- glue('https://boardgamegeek.com/xmlapi2/search?query={query}&type=boardgame')
-        page         <- stubborn_html_reader(link)
+        page         <- stubborn_xml_reader(link)
         all_items    <- html_elements(page, 'item')
         query_result <- features_extractor(all_items, my_features)
         
         # just expansions
         link           <- glue('https://boardgamegeek.com/xmlapi2/search?query={query}&type=boardgameexpansion')
-        page           <- stubborn_html_reader(link)
+        page           <- stubborn_xml_reader(link)
         expansions     <- html_elements(page, 'item')
         expansions_ids <- html_attr(expansions, 'id')
         
@@ -968,7 +1004,7 @@ searchbgg <- function(query,
     } else {
         # type was specified as something other than 'boardgame'
         link         <- glue('https://boardgamegeek.com/xmlapi2/search?query={query}&type={type}')
-        page         <- stubborn_html_reader(link)
+        page         <- stubborn_xml_reader(link)
         all_items    <- html_elements(page, 'item')
         query_result <- features_extractor(all_items, my_features)
     }
@@ -1088,7 +1124,7 @@ user <- function(username, buddies = 0, guilds = 0, hot = 0, top = 0) {
     link <- paste0(link, '&top=',     top)
     
     # obtain html page
-    html_page <- stubborn_html_reader(link)
+    html_page <- stubborn_xml_reader(link)
     
     # elements to parse features
     buddies <- if ( buddies        ) html_elements(html_page, 'buddies') else NULL

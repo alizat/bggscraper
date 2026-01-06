@@ -25,14 +25,12 @@ sorts of (publicly accessible) data from the [Board Game
 Geek](boardgamegeek.com) website. It depends heavily on the [BGG XML
 API2](https://boardgamegeek.com/wiki/page/BGG_XML_API2) library.
 
-`bggscraper` was previously an R package, that could be installeda and used.
+`bggscraper` was previously an R package, that could be installed and used.
 However, I decided against making it a package because I found myself wasting
 quite a lot of time doing package development as opposed to writing the scraping
 code itself. Perhaps, when I am done writing all the code for scraping the BGG
 website, I will convert it back to an R package again; however, this remains to
 be seen.
-
-***Note: This is a work in progress!***
 
 Using this library, you may scrape the following info (among others):
 
@@ -43,6 +41,26 @@ Using this library, you may scrape the following info (among others):
 * list of games that are hot nowadays.
 * information on plays of a certain game for one or more users.
 * geeklists, forum lists, forums, threads or guilds pertaining to a certain board game id.
+
+
+
+## How to Use
+
+In order to use the `bggscraper` functionality, you will need to acquire a 
+**BGG application token** first. Instructions can be found at  
+[this link](https://boardgamegeek.com/using_the_xml_api) under the heading 
+*Application Tokens*.
+
+Note that once you apply for a BGG application token, it may may take some time
+until they provide you with one. Until you do, you may check regularly at
+[https://boardgamegeek.com/applications](https://boardgamegeek.com/applications)
+to check whether you have received it yet.
+
+Once you have acquired a BGG application token, you may add it in the script
+called `load_bgg_token.R` and you're good to go! To test, you may run the
+`examples.R` script to ensure everything is working fine.
+
+Enjoy!
 
 
 
