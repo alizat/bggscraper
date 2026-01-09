@@ -47,13 +47,13 @@ Using this library, you may scrape the following info (among others):
 ## How to Use
 
 In order to use the `bggscraper` functionality, you will need to acquire a 
-**BGG application token** first. Instructions can be found at  
-[this link](https://boardgamegeek.com/using_the_xml_api) under the heading 
+**BGG application token** first. Instructions can be found at 
+[this link](https://boardgamegeek.com/using_the_xml_api) under the heading: 
 *Application Tokens*.
 
-Note that once you apply for a BGG application token, it may may take some time
-until they provide you with one. Until you do, you may check regularly at
-[https://boardgamegeek.com/applications](https://boardgamegeek.com/applications)
+Note that once you apply for a BGG application token, it may take a week or two 
+till they provide you with one. Until then, you may check 
+[your applications page](https://boardgamegeek.com/applications) regularly 
 to check whether you have received it yet.
 
 Once you have acquired a BGG application token, you may add it in the script

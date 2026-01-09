@@ -4,12 +4,6 @@
 
 
 
-# TODO: Move BGG token below into into an untracked file (.env?)
-# TODO: Add to README  -->  how to get BGG token!
-# TODO: Mention that any usages of XML API 2 needed removal of "www." from all urls!
-
-
-
 suppressMessages({
     library(tidyverse)
     library(lubridate)
